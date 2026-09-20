@@ -13,6 +13,7 @@ import {
   AnalysisProgress,
   StageRuntimeState,
 } from "@/lib/services/analysisService";
+import { reportStorageService } from "@/lib/services/reportStorageService";
 
 type WorkspaceStep = "configure" | "processing" | "report";
 
@@ -92,6 +93,11 @@ export function VerifyPage() {
       );
 
       setTrustReport(report);
+      try {
+        await reportStorageService.saveReport(report, selectedMedia.previewUrl);
+      } catch (saveErr) {
+        console.warn("Could not persist report to local storage:", saveErr);
+      }
       setStep("report");
     } catch (err: unknown) {
       console.error("Analysis execution failed:", err);
