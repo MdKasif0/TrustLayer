@@ -211,6 +211,17 @@ export default function HomePage() {
               );
             })}
           </div>
+
+          <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <p className="text-xs text-muted leading-relaxed">
+              Read our full methodology specifications, academic literature citations, and technical limitations disclosure.
+            </p>
+            <Link href="/about">
+              <Button variant="outline" size="sm" className="text-xs font-mono shrink-0">
+                Explore Methodology & Research Foundations →
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
