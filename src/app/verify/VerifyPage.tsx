@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { MediaFile, AnalysisSignalType, TrustReport } from "@/lib/types";
 import { UploadArea } from "@/components/verify/UploadArea";
 import { MediaPreview } from "@/components/verify/MediaPreview";
 import { SignalConfigPanel } from "@/components/verify/SignalConfigPanel";
-import { AnalysisSidebar } from "@/components/verify/AnalysisSidebar";
 import { AnalysisProgressScreen } from "@/components/verify/AnalysisProgressScreen";
 import { AssessmentReport } from "@/components/verify/AssessmentReport";
 import { StageRuntimeState } from "@/lib/services/analysisService";
@@ -30,6 +29,7 @@ export function VerifyPage() {
   const [evidenceSignalsCollected, setEvidenceSignalsCollected] = useState<number>(0);
   const [totalSignals, setTotalSignals] = useState<number>(4);
   const [telemetryLog, setTelemetryLog] = useState<string[]>([]);
+  const isCancelledRef = useRef<boolean>(false);
 
   // Completed report state
   const [trustReport, setTrustReport] = useState<TrustReport | null>(null);
@@ -61,10 +61,18 @@ export function VerifyPage() {
     handleRemoveMedia();
   }, [handleRemoveMedia]);
 
+  // Handle cancellation during active analysis
+  const handleCancelVerification = useCallback(() => {
+    isCancelledRef.current = true;
+    setStep("configure");
+    setTelemetryLog((prev) => [...prev, "Investigation cancelled by user."]);
+  }, []);
+
   // Trigger analysis execution
   const handleStartVerification = useCallback(async () => {
     if (!selectedMedia || activeSignals.length === 0) return;
 
+    isCancelledRef.current = false;
     setStep("processing");
     setCurrentStageIndex(0);
     setEvidenceSignalsCollected(0);
@@ -83,6 +91,7 @@ export function VerifyPage() {
         activeSignals,
         {
           onProgress: (progress: AnalysisProgressEvent) => {
+            if (isCancelledRef.current) return;
             setCurrentStageIndex(progress.stageIndex);
             if (progress.stageStates) {
               setStageStates(progress.stageStates as Record<string, StageRuntimeState>);
@@ -94,6 +103,8 @@ export function VerifyPage() {
         }
       );
 
+      if (isCancelledRef.current) return;
+
       setTrustReport(report);
       try {
         await reportStorageService.saveReport(report, selectedMedia.previewUrl);
@@ -102,6 +113,7 @@ export function VerifyPage() {
       }
       setStep("report");
     } catch (err: unknown) {
+      if (isCancelledRef.current) return;
       console.error("Analysis execution failed:", err);
       setTelemetryLog((prev) => [
         ...prev,
@@ -116,43 +128,43 @@ export function VerifyPage() {
   }, [handleRemoveMedia]);
 
   return (
-    <div className="py-8 sm:py-12 bg-background min-h-[calc(100vh-64px)]">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
-        {/* Page Header (rendered only when not in active analysis to keep timeline header clean) */}
+    <div className="py-8 sm:py-12 bg-background min-h-[calc(100vh-64px)] text-foreground">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        {/* Page Header (Rendered during configuration to set the clear investigative tone) */}
         {step !== "processing" && (
-          <header className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <header className="mb-8 pb-4 border-b border-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-soft-green px-2.5 py-0.5 rounded border border-[#C1E3CA]">
-                    Workspace
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-very-soft-green px-2.5 py-0.5 rounded border border-border">
+                    INVESTIGATION WORKSPACE
                   </span>
-                  <span className="text-xs text-muted">Cyber Safety Verification Engine</span>
                   {isDemoMode() && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A6116] font-semibold bg-[#FBF7EE] border border-[#E5D7B5] px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#92610F] font-semibold bg-warning-bg border border-[#E8D5A0] px-2 py-0.5 rounded">
                       Demo Mode
                     </span>
                   )}
                 </div>
+
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                   Verify Media
                 </h1>
-                <p className="text-sm text-muted max-w-2xl mt-1.5 leading-relaxed">
-                  Upload an image or video to begin a multi-signal evidence assessment.
+                <p className="text-sm text-muted mt-1 leading-relaxed max-w-2xl">
+                  Analyze a digital image or video across multiple independent evidence signals.
                 </p>
               </div>
             </div>
           </header>
         )}
 
-        {/* Workspace Views */}
+        {/* WORKSPACE VIEWS */}
         {step === "report" && trustReport ? (
-          /* Step 3: Completed Assessment Report */
+          /* STEP 3: Completed Assessment Report */
           <div className="animate-in fade-in duration-200">
             <AssessmentReport report={trustReport} onReset={handleReset} />
           </div>
         ) : step === "processing" && selectedMedia ? (
-          /* Step 2: Dedicated Analysis Progress Screen (Two-Column Visual) */
+          /* STEP 2: Dedicated Analysis Workspace (Two-Column: MEDIA PREVIEW alongside ANALYSIS QUEUE) */
           <div className="animate-in fade-in duration-200">
             <AnalysisProgressScreen
               media={selectedMedia}
@@ -162,39 +174,33 @@ export function VerifyPage() {
               evidenceSignalsCollected={evidenceSignalsCollected}
               totalSignals={totalSignals}
               telemetryLog={telemetryLog}
+              onCancel={handleCancelVerification}
             />
           </div>
         ) : (
-          /* Step 1: Upload & Configuration Workspace */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            {/* Main Interactive Column */}
-            <div className="lg:col-span-2 space-y-6">
+          /* STEP 1: Two-Column Workspace (LEFT: Media Input, RIGHT: Verification Configuration) */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* LEFT COLUMN: Media Input */}
+            <div className="lg:col-span-7">
               {!selectedMedia ? (
-                /* Upload Area */
                 <UploadArea onFileAccepted={handleFileAccepted} />
               ) : (
-                /* Uploaded File Preview */
                 <MediaPreview
                   media={selectedMedia}
                   onReplace={handleReplaceMedia}
                   onRemove={handleRemoveMedia}
                 />
               )}
+            </div>
 
-              {/* Analysis Configuration Panel */}
+            {/* RIGHT COLUMN: Verification Configuration */}
+            <div className="lg:col-span-5">
               <SignalConfigPanel
                 activeSignals={activeSignals}
                 onToggleSignal={handleToggleSignal}
                 onStartVerification={handleStartVerification}
                 disabled={!selectedMedia}
-              />
-            </div>
-
-            {/* Sidebar Column: File Metadata & System Readiness */}
-            <div className="lg:col-span-1">
-              <AnalysisSidebar
-                media={selectedMedia}
-                activeSignalCount={activeSignals.length}
+                mediaKind={selectedMedia?.mediaKind || "image"}
               />
             </div>
           </div>
