@@ -46,7 +46,7 @@ export function ComponentShowcase() {
             {[
               { name: "Background", color: "#FAFAF7" },
               { name: "Surface", color: "#FFFFFF" },
-              { name: "Primary", color: "#14532D" },
+              { name: "Primary", color: "#16A34A" },
               { name: "Secondary", color: "#2F6B4F" },
               { name: "Soft Green", color: "#EAF4ED" },
               { name: "Foreground", color: "#17201A" },

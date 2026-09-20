@@ -29,7 +29,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           <button
             type="button"
             onClick={() => reset()}
-            className="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-[#14532D] hover:bg-[#0F4023] rounded-md transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-[#16A34A] hover:bg-[#15803D] rounded-md transition-colors cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5 mr-2" />
             Reload TrustLayer
