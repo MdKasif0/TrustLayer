@@ -288,7 +288,7 @@ export function EvidenceDetailsSection({ report }: EvidenceDetailsSectionProps) 
                     className={cn(
                       "text-xs font-mono px-2.5 py-1 rounded border font-medium flex items-center gap-1.5",
                       isSelected
-                        ? "bg-[#17201A] text-white border-[#17201A] font-bold"
+                        ? "bg-primary text-white border-primary font-bold"
                         : "bg-[#FAFAF8] text-muted border-border"
                     )}
                   >
