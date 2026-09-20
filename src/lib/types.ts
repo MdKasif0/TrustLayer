@@ -4,6 +4,16 @@ export type AnalysisStatus = "pending" | "running" | "complete" | "error";
 
 export type AnalysisSignalType = "ai-detection" | "provenance" | "metadata" | "forensic";
 
+export type TimelineStageStatus = "pending" | "in-progress" | "complete" | "warning" | "failed";
+export type QualitativeState =
+  | "detected"
+  | "available"
+  | "not-available"
+  | "inconclusive"
+  | "suspicious"
+  | "pending"
+  | "evaluating";
+
 export interface MediaFile {
   id: string;
   file: File;
@@ -49,6 +59,7 @@ export interface AnalysisResult {
   summary: string;
   items: EvidenceItem[];
   anomalyDetected: boolean;
+  qualitativeState?: QualitativeState;
 }
 
 export interface ProcessingStage {
@@ -56,7 +67,8 @@ export interface ProcessingStage {
   id: string;
   name: string;
   description: string;
-  status: "pending" | "active" | "complete" | "skipped";
+  status: TimelineStageStatus;
+  qualitativeState?: QualitativeState;
   telemetryMessage?: string;
 }
 
