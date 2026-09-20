@@ -81,13 +81,13 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
       </div>
 
       {/* Visual Canvas Viewport */}
-      <div className="relative bg-[#111613] flex items-center justify-center min-h-[300px] max-h-[440px] overflow-hidden select-none">
+      <div className="relative bg-[#F0F2F0] border-y border-border flex items-center justify-center min-h-[300px] max-h-[440px] overflow-hidden select-none">
         {isVideo ? (
           <video
             src={media.previewUrl}
             controls
             playsInline
-            className="w-full max-h-[440px] object-contain opacity-90"
+            className="w-full max-h-[440px] object-contain"
           />
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">
@@ -95,7 +95,7 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
             <img
               src={media.previewUrl}
               alt={media.name}
-              className="w-full max-h-[440px] object-contain opacity-95"
+              className="w-full max-h-[440px] object-contain"
             />
 
             {/* Layer 1: Error Level Analysis (ELA) Overlay */}
@@ -103,13 +103,13 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
               <div className="absolute inset-0 pointer-events-none">
                 {/* Foreground focal anomaly cluster */}
                 <div className="absolute top-[28%] left-[22%] w-[56%] h-[48%] border-2 border-dashed border-[#B7791F] rounded-lg bg-[#B7791F]/15">
-                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#17201A] text-[#E8D5A0] border border-[#E8D5A0]/40">
+                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FFFDF9] text-[#92610F] border border-[#E8D5A0] shadow-xs">
                     ELA Delta: +28.6% (Localized Discrepancy)
                   </div>
                 </div>
                 {/* Background baseline */}
-                <div className="absolute top-[6%] right-[8%] w-[32%] h-[24%] border border-dashed border-[#86EFAC]/60 rounded bg-[#14532D]/10">
-                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#17201A] text-[#86EFAC] border border-white/10">
+                <div className="absolute top-[6%] right-[8%] w-[32%] h-[24%] border border-dashed border-primary/60 rounded bg-primary/10">
+                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface text-primary border border-border shadow-xs">
                     Baseline Compression (Normal)
                   </div>
                 </div>
@@ -119,14 +119,14 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
             {/* Layer 2: Boundary Gradients & Edge Reticles */}
             {activeLayer === "boundaries" && (
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[34%] left-[16%] w-[48%] h-[42%] border border-[#86EFAC] rounded bg-[#2F6B4F]/10">
-                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#17201A] text-[#86EFAC] border border-white/15">
+                <div className="absolute top-[34%] left-[16%] w-[48%] h-[42%] border border-primary rounded bg-primary/10">
+                  <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface text-primary border border-border shadow-xs">
                     Spatial Boundary Blending (Synthetic Characteristic)
                   </div>
-                  <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#86EFAC]" />
-                  <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#86EFAC]" />
-                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#86EFAC]" />
-                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#86EFAC]" />
+                  <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-primary" />
+                  <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-primary" />
+                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-primary" />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-primary" />
                 </div>
               </div>
             )}
@@ -135,17 +135,17 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
             {activeLayer === "noise" && (
               <div className="absolute inset-0 pointer-events-none">
                 <div className="w-full h-full grid grid-cols-2 grid-rows-2">
-                  <div className="border border-white/10 p-2 flex items-start justify-start">
-                    <span className="text-[10px] font-mono text-[#86EFAC] bg-[#17201A]/80 px-1.5 py-0.5 rounded">Q1: RMS 0.014</span>
+                  <div className="border border-border/60 p-2 flex items-start justify-start">
+                    <span className="text-[10px] font-mono font-bold text-primary bg-surface px-1.5 py-0.5 rounded border border-border shadow-xs">Q1: RMS 0.014</span>
                   </div>
-                  <div className="border border-white/10 p-2 flex items-start justify-end">
-                    <span className="text-[10px] font-mono text-[#86EFAC] bg-[#17201A]/80 px-1.5 py-0.5 rounded">Q2: RMS 0.015</span>
+                  <div className="border border-border/60 p-2 flex items-start justify-end">
+                    <span className="text-[10px] font-mono font-bold text-primary bg-surface px-1.5 py-0.5 rounded border border-border shadow-xs">Q2: RMS 0.015</span>
                   </div>
-                  <div className="border border-white/10 p-2 flex items-end justify-start">
-                    <span className="text-[10px] font-mono text-[#E8D5A0] bg-[#17201A]/80 px-1.5 py-0.5 rounded">Q3: Variance Delta</span>
+                  <div className="border border-border/60 p-2 flex items-end justify-start">
+                    <span className="text-[10px] font-mono font-bold text-[#92610F] bg-[#FFFDF9] px-1.5 py-0.5 rounded border border-[#E8D5A0] shadow-xs">Q3: Variance Delta</span>
                   </div>
-                  <div className="border border-white/10 p-2 flex items-end justify-end">
-                    <span className="text-[10px] font-mono text-[#86EFAC] bg-[#17201A]/80 px-1.5 py-0.5 rounded">Q4: RMS 0.014</span>
+                  <div className="border border-border/60 p-2 flex items-end justify-end">
+                    <span className="text-[10px] font-mono font-bold text-primary bg-surface px-1.5 py-0.5 rounded border border-border shadow-xs">Q4: RMS 0.014</span>
                   </div>
                 </div>
               </div>

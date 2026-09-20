@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrustLayer — Digital Media Verification
 
-## Getting Started
+> Multi-signal digital media verification platform combining AI detection, cryptographic provenance, file metadata, and forensic indicators into a transparent, evidence-based assessment.
 
-First, run the development server:
+---
+
+## 1. Overview & Architecture
+
+TrustLayer does not attempt to answer authenticity with a single classifier. In adversarial, real-world media environments, isolated neural networks are easily deceived by unseen generation architectures, benign compression, and localized editing.
+
+TrustLayer treats verification as a structured multi-signal forensic inquiry across four independent channels:
+
+1. **AI Detection**: Dual-domain spectral decomposition (DCT/FFT), universal latent visual feature projections (CLIP ViT), and checkerboard lattice attenuation analysis.
+2. **Provenance (C2PA)**: Cryptographic manifest inspection (ISO/IEC 23008-12 JUMBF), X.509 PKI trust chain validation, and hardware keystore signature verification.
+3. **Metadata**: Container structural parsing (EXIF, XMP, IPTC) and JPEG Discrete Quantization Table (DQT) firmware profile matching.
+4. **Forensics**: Error Level Analysis (ELA) re-compression variance, Photo Response Non-Uniformity (PRNU) sensor pattern noise consistency, and temporal video coherence.
+
+---
+
+## 2. Local Development
+
+### Prerequisites
+- Node.js 20.x or higher
+- npm 10.x or higher
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/MdKasif0/TrustLayer.git
+cd TrustLayer
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to access the workspace.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 3. Production Build
 
-## Learn More
+```bash
+# Run type checking
+npx tsc --noEmit
 
-To learn more about Next.js, take a look at the following resources:
+# Compile production bundle
+npm run build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start production server locally
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 4. Netlify Deployment & Configuration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+TrustLayer is built with a Netlify-compatible architecture. All server-side API proxy routes use standard web `Request` and `NextResponse` primitives without native binary dependencies.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Netlify Deployment Steps
+1. Connect your GitHub repository to Netlify.
+2. Set the build command to `npm run build`.
+3. Set the publish directory to `.next`.
+4. Netlify automatically detects Next.js via the `@netlify/plugin-nextjs` plugin defined in `netlify.toml`.
+
+### Netlify Environment Variables
+
+Configure these variables in **Site configuration → Environment variables** in your Netlify dashboard:
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `NEXT_PUBLIC_DEMO_MODE` | No | `true` | When `true`, executes deterministic demo analysis with full UI functionality (upload, timeline, reports, permalinks) without external credentials. Set to `false` for live production. |
+| `NEXT_PUBLIC_SITE_URL` | No | Site URL | Canonical URL of the deployed application (used for sitemap and Open Graph metadata). |
+| `PYTHON_BACKEND_URL` | No | None | Internal URL of upstream Python/FastAPI ML microservice (kept strictly server-side, never leaked to client). |
+| `TRUSTLAYER_API_URL` | No | None | URL of enterprise TrustLayer API gateway. |
+| `TRUSTLAYER_API_KEY` | No | None | Private bearer token / secret key for authenticating server proxy requests to upstream microservices. |
+| `C2PA_SERVICE_URL` | No | None | Endpoint for standalone Rust `c2pa-rs` manifest inspection microservice. |
+| `METADATA_SERVICE_URL` | No | None | Endpoint for standalone ExifTool metadata parsing microservice. |
+
+> **Security Guarantee**: Vendor API tokens and internal microservice URLs are resolved strictly inside Next.js server route handlers (`src/app/api/analyze/route.ts`) and are never bundled into client-side JavaScript.
+
+---
+
+## 5. Responsible Use & Technical Limitations
+
+- **Detection is probabilistic**: Machine learning classifiers output likelihood distributions based on empirical training sets. No statistical model guarantees 100% certainty.
+- **New generation methods evolve**: Zero-day generative diffusion schedulers and upscalers may exhibit distributions not captured in existing research benchmarks.
+- **Compression affects evidence**: Social media transcoding discards high-frequency DCT coefficients and attenuates sensor noise floors.
+- **Benign editing alters baselines**: Routine cropping, color grading, and format re-saving modify quantization tables without constituting synthetic fraud.
+- **Missing provenance is common**: The vast majority of consumer media online lacks C2PA credentials; missing provenance is never evidence of manipulation.
+- **Human-in-the-loop**: TrustLayer is an investigative decision-support system designed to empower human analysts, journalists, and forensic examiners—not to replace human judgment.
+
+---
+
+## 6. License & Research Attribution
+
+Released under the [MIT License](LICENSE). Methodology synthesized from peer-reviewed literature including Wang et al. (CVPR 2020), Ojha et al. (CVPR 2023), FaceForensics++ (ICCV 2019), DeepfakeBench (NeurIPS 2023), and standards by NIST and C2PA.

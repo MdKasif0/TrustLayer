@@ -64,7 +64,7 @@ export function MediaPreview({ media, onReplace, onRemove, disabled = false }: M
       </div>
 
       {/* Media Viewport */}
-      <div className="relative bg-[#111613] flex items-center justify-center min-h-[300px] max-h-[480px] overflow-hidden">
+      <div className="relative bg-[#F0F2F0] border-b border-border flex items-center justify-center min-h-[300px] max-h-[480px] overflow-hidden">
         {isVideo ? (
           <video
             src={media.previewUrl}

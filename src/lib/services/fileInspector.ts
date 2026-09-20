@@ -76,6 +76,23 @@ export interface MediaDimensions {
   duration?: number;
 }
 
+/**
+ * Sanitizes user-supplied filenames to eliminate directory traversal sequences,
+ * control characters, and illegal filesystem characters.
+ */
+export function sanitizeFilename(rawName: string): string {
+  if (!rawName) return "media-sample";
+  // Strip path traversal sequences (../, ..\) and extract basename
+  const base = rawName.split(/[/\\]/).pop() || "media-sample";
+  // Remove null bytes, control characters, and reserved symbols
+  const cleaned = base
+    .replace(/[\0\x00-\x1F\x7F]/g, "")
+    .replace(/[<>:"/\\|?*]/g, "_")
+    .replace(/^\.+/, "") // Remove leading periods
+    .trim();
+  return cleaned.length > 0 ? cleaned.slice(0, 180) : "media-sample";
+}
+
 export function inspectMediaDimensions(file: File, previewUrl: string): Promise<MediaDimensions> {
   const isVideo = file.type.startsWith("video/") || file.name.toLowerCase().endsWith(".mp4") || file.name.toLowerCase().endsWith(".mov");
 
@@ -94,7 +111,11 @@ export function inspectMediaDimensions(file: File, previewUrl: string): Promise<
       };
 
       video.onerror = () => {
-        reject(new Error("Unable to decode video stream. The video file may be corrupted, truncated, or encoded with an unsupported codec."));
+        reject(
+          new Error(
+            "Unable to decode video stream. The video may be encoded with an unsupported codec (e.g. Apple ProRes, uncompressed AVI, or HEVC profile) or is corrupted. Please use standard H.264/MP4 or MOV."
+          )
+        );
       };
     } else {
       const img = new Image();

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Upload, AlertCircle, Shield, FileCheck, X } from "lucide-react";
-import { validateMediaFile, inspectMediaDimensions, computeSha256 } from "@/lib/services/fileInspector";
+import { validateMediaFile, inspectMediaDimensions, computeSha256, sanitizeFilename } from "@/lib/services/fileInspector";
 import { MediaFile } from "@/lib/types";
 
 interface UploadAreaProps {
@@ -47,10 +47,12 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
         // 3. Client-side SHA-256 computation for forensic integrity
         const hashSha256 = await computeSha256(rawFile);
 
+        const safeName = sanitizeFilename(rawFile.name);
+
         const mediaFile: MediaFile = {
           id: `media-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
           file: rawFile,
-          name: rawFile.name,
+          name: safeName,
           size: rawFile.size,
           type: rawFile.type || (isVideo ? "video/mp4" : "image/jpeg"),
           extension: ext.toUpperCase(),

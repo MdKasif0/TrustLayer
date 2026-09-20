@@ -499,18 +499,18 @@ export default function AboutPage() {
 
         {/* Transparency Statement */}
         <section className="mb-12">
-          <div className="p-6 sm:p-8 bg-[#17201A] text-white rounded-xl shadow-md border border-[#2A3B30]">
+          <div className="p-6 sm:p-8 bg-surface text-foreground rounded-xl shadow-xs border-2 border-primary">
             <div className="max-w-3xl">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-2 h-2 rounded-full bg-[#4ADE80]" />
-                <span className="text-[11px] font-mono uppercase tracking-widest text-[#A3E635] font-bold">
+                <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+                <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold">
                   TRANSPARENCY DECLARATION
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-3">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-3">
                 Our Commitment to Forensic Integrity
               </h2>
-              <div className="space-y-3 text-xs sm:text-sm text-[#D1D5DB] leading-relaxed">
+              <div className="space-y-3 text-xs sm:text-sm text-muted leading-relaxed">
                 <p>
                   TrustLayer rejects opaque, single-metric commercial claims such as &ldquo;99.9% detection accuracy.&rdquo;
                   In real-world cybersecurity, adversarial conditions, compression degradation, and novel model distributions render fabricated certainty dangerous.
@@ -522,18 +522,18 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
-                <div className="text-xs font-mono text-[#9CA3AF]">
+              <div className="mt-6 pt-6 border-t border-border flex flex-wrap items-center justify-between gap-4">
+                <div className="text-xs font-mono text-muted">
                   <span>TrustLayer Open Architecture · Released under MIT License</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Link href="/docs">
-                    <Button variant="outline" size="sm" className="text-xs text-white border-white/20 hover:bg-white/10">
+                    <Button variant="outline" size="sm" className="text-xs">
                       Technical Docs
                     </Button>
                   </Link>
                   <Link href="/verify">
-                    <Button variant="primary" size="sm" className="text-xs bg-[#28734A] hover:bg-[#1E5638] text-white border-none">
+                    <Button variant="primary" size="sm" className="text-xs">
                       Verify Media
                     </Button>
                   </Link>

@@ -50,13 +50,13 @@ export function MediaInspectionVisual({ media, currentStageIndex }: MediaInspect
       </div>
 
       {/* Media Inspection Canvas */}
-      <div className="relative bg-[#111613] flex items-center justify-center min-h-[320px] max-h-[460px] overflow-hidden select-none">
+      <div className="relative bg-[#F0F2F0] border-y border-border flex items-center justify-center min-h-[320px] max-h-[460px] overflow-hidden select-none">
         {isVideo ? (
           <video
             src={media.previewUrl}
             controls
             playsInline
-            className="w-full max-h-[460px] object-contain opacity-90"
+            className="w-full max-h-[460px] object-contain"
           />
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">
@@ -64,49 +64,49 @@ export function MediaInspectionVisual({ media, currentStageIndex }: MediaInspect
             <img
               src={media.previewUrl}
               alt={media.name}
-              className="w-full max-h-[460px] object-contain opacity-95"
+              className="w-full max-h-[460px] object-contain"
             />
 
             {/* Subtle Analysis-Region Indicators (Strictly Non-Neon, Precision Cybersecurity Grid) */}
             {/* Region 01: High-Frequency Spectrum */}
-            <div className="absolute top-[12%] right-[10%] w-[34%] h-[32%] border border-dashed border-[#86EFAC]/70 rounded pointer-events-none bg-[#14532D]/10">
-              <div className="absolute -top-5 left-0 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#17201A]/90 text-[#86EFAC] border border-white/15">
+            <div className="absolute top-[12%] right-[10%] w-[34%] h-[32%] border border-dashed border-primary/70 rounded pointer-events-none bg-primary/5">
+              <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface text-primary border border-border shadow-xs">
                 REG-01: Frequency Spectrum
               </div>
-              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#86EFAC]" />
-              <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#86EFAC]" />
-              <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#86EFAC]" />
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#86EFAC]" />
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary" />
+              <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-primary" />
+              <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-primary" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary" />
             </div>
 
             {/* Region 02: Spatial Boundary Reticle */}
-            <div className="absolute top-[38%] left-[20%] w-[42%] h-[38%] border border-[#86EFAC]/60 rounded pointer-events-none bg-[#2F6B4F]/10">
-              <div className="absolute -top-5 left-0 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#17201A]/90 text-[#86EFAC] border border-white/15">
+            <div className="absolute top-[38%] left-[20%] w-[42%] h-[38%] border border-primary/60 rounded pointer-events-none bg-secondary/5">
+              <div className="absolute -top-5 left-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface text-primary border border-border shadow-xs">
                 REG-02: Spatial Boundary
               </div>
-              <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-[#86EFAC]" />
-              <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-[#86EFAC]" />
-              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-[#86EFAC]" />
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-[#86EFAC]" />
+              <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-primary" />
+              <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-primary" />
+              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-primary" />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-primary" />
             </div>
 
             {/* Region 03: PRNU Noise Floor */}
-            <div className="absolute bottom-[10%] left-[8%] w-[28%] h-[24%] border border-dashed border-[#C4D7C7]/50 rounded pointer-events-none bg-[#17201A]/20">
-              <div className="absolute -bottom-5 left-0 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#17201A]/90 text-[#C4D7C7] border border-white/15">
+            <div className="absolute bottom-[10%] left-[8%] w-[28%] h-[24%] border border-dashed border-border-strong rounded pointer-events-none bg-black/5">
+              <div className="absolute -bottom-5 left-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface text-foreground border border-border shadow-xs">
                 REG-03: Noise Consistency
               </div>
-              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#C4D7C7]" />
-              <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#C4D7C7]" />
-              <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#C4D7C7]" />
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#C4D7C7]" />
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-border-strong" />
+              <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-border-strong" />
+              <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-border-strong" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-border-strong" />
             </div>
           </div>
         )}
 
         {/* Scan Status Overlay Badges */}
         <div className="absolute bottom-3 right-3 flex items-center gap-2 pointer-events-none">
-          <span className="text-[10px] font-mono px-2 py-1 rounded bg-black/80 text-white/90 border border-white/15 backdrop-blur-xs flex items-center gap-1.5">
-            <Scan className="w-3 h-3 text-[#86EFAC]" />
+          <span className="text-[10px] font-mono px-2 py-1 rounded bg-surface text-foreground border border-border shadow-xs flex items-center gap-1.5 font-bold">
+            <Scan className="w-3 h-3 text-primary" />
             Active Stage {currentStageIndex + 1} of 6
           </span>
         </div>

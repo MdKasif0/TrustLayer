@@ -102,6 +102,8 @@ export function SignalConfigPanel({
             <button
               key={signal.id}
               type="button"
+              role="checkbox"
+              aria-checked={isSelected}
               onClick={() => onToggleSignal(signal.id)}
               disabled={disabled}
               className={cn(

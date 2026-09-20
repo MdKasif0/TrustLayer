@@ -255,14 +255,24 @@ export default function ReportsPage() {
 
         {/* Reports Table / List or Empty State */}
         {isLoading ? (
-          <div className="p-12 text-center border border-border rounded-xl bg-surface">
-            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-xs font-mono text-muted">Loading verification records...</p>
+          <div className="border border-border rounded-xl bg-surface p-4 divide-y divide-border/60">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="py-3.5 flex items-center gap-4 animate-pulse">
+                <div className="w-10 h-10 bg-[#F0F2F0] rounded-md shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3.5 bg-[#F0F2F0] rounded w-48" />
+                  <div className="h-2.5 bg-[#F0F2F0] rounded w-28" />
+                </div>
+                <div className="h-6 bg-[#F0F2F0] rounded w-20 hidden md:block" />
+                <div className="h-6 bg-[#F0F2F0] rounded w-36 hidden sm:block" />
+                <div className="h-6 bg-[#F0F2F0] rounded w-24" />
+              </div>
+            ))}
           </div>
         ) : filteredReports.length > 0 ? (
           <div className="border border-border rounded-xl bg-surface overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full min-w-[720px] text-left text-xs border-collapse">
                 <thead className="bg-[#FAFBF9] border-b border-border text-[10px] uppercase font-mono font-bold text-muted tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Media</th>
