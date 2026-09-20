@@ -33,7 +33,7 @@ export function ReportExportModal({ report, isOpen, onClose }: ReportExportModal
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 overflow-y-auto"
     >
       <div className="relative w-full max-w-3xl my-8 bg-surface rounded-xl border border-border shadow-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Action Header (hidden on print) */}
