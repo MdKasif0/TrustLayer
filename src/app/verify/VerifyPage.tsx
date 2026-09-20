@@ -8,12 +8,9 @@ import { SignalConfigPanel } from "@/components/verify/SignalConfigPanel";
 import { AnalysisSidebar } from "@/components/verify/AnalysisSidebar";
 import { AnalysisProgressScreen } from "@/components/verify/AnalysisProgressScreen";
 import { AssessmentReport } from "@/components/verify/AssessmentReport";
-import {
-  defaultAnalysisService,
-  AnalysisProgress,
-  StageRuntimeState,
-} from "@/lib/services/analysisService";
+import { StageRuntimeState } from "@/lib/services/analysisService";
 import { reportStorageService } from "@/lib/services/reportStorageService";
+import { getAnalysisProvider, isDemoMode, AnalysisProgressEvent } from "@/lib/analysis";
 
 type WorkspaceStep = "configure" | "processing" | "report";
 
@@ -80,15 +77,20 @@ export function VerifyPage() {
     ]);
 
     try {
-      const report = await defaultAnalysisService.analyze(
+      const provider = getAnalysisProvider();
+      const report = await provider.analyzeMedia(
         selectedMedia,
         activeSignals,
-        (progress: AnalysisProgress) => {
-          setCurrentStageIndex(progress.stageIndex);
-          setStageStates(progress.stageStates);
-          setEvidenceSignalsCollected(progress.evidenceSignalsCollected);
-          setTotalSignals(progress.totalSignals);
-          setTelemetryLog((prev) => [...prev, progress.telemetry]);
+        {
+          onProgress: (progress: AnalysisProgressEvent) => {
+            setCurrentStageIndex(progress.stageIndex);
+            if (progress.stageStates) {
+              setStageStates(progress.stageStates as Record<string, StageRuntimeState>);
+            }
+            setEvidenceSignalsCollected(progress.evidenceSignalsCollected);
+            setTotalSignals(progress.totalSignals);
+            setTelemetryLog((prev) => [...prev, progress.telemetry]);
+          },
         }
       );
 
@@ -126,6 +128,11 @@ export function VerifyPage() {
                     Workspace
                   </span>
                   <span className="text-xs text-muted">Cyber Safety Verification Engine</span>
+                  {isDemoMode() && (
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A6116] font-semibold bg-[#FBF7EE] border border-[#E5D7B5] px-2 py-0.5 rounded">
+                      Demo Mode
+                    </span>
+                  )}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                   Verify Media
