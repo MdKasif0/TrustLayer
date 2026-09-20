@@ -446,13 +446,13 @@ export default function ReportsPage() {
               No verification reports yet.
             </h3>
             <p className="text-xs sm:text-sm text-muted max-w-md mx-auto mt-1.5 leading-relaxed">
-              Your media verification history will appear here after you analyze your first file. Each record provides a complete multi-signal evidence audit trail.
+              Upload your first image or video to create a Trust Report.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
               <Link href="/verify">
                 <Button variant="primary" size="md" icon={<ScanSearch className="w-4 h-4" />}>
-                  Verify Your First File
+                  Verify Media
                 </Button>
               </Link>
               <Button

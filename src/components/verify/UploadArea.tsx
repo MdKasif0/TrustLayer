@@ -249,25 +249,40 @@ export function UploadArea({
       {errorMessage && (
         <div
           role="alert"
-          className="mt-4 p-4 bg-danger-bg border border-[#F0C5C1] rounded-xl flex items-start justify-between gap-3 text-sm text-danger animate-in fade-in duration-200"
+          className="mt-4 p-4 bg-danger-bg border border-[#F0C5C1] rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm text-danger animate-in fade-in duration-200"
         >
           <div className="flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-xs uppercase tracking-wider mb-0.5">
-                Upload Validation Error
+                {errorMessage.includes("format") || errorMessage.includes("Unsupported")
+                  ? "Unsupported file type"
+                  : "Upload Error"}
               </p>
-              <p className="text-xs sm:text-sm text-danger/90">{errorMessage}</p>
+              <p className="text-xs sm:text-sm text-danger/90">
+                {errorMessage.includes("format") || errorMessage.includes("Unsupported")
+                  ? "TrustLayer supports JPG, PNG, WEBP, MP4 and MOV."
+                  : errorMessage}
+              </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setErrorMessage(null)}
-            className="text-danger/70 hover:text-danger p-1 rounded hover:bg-white/40 transition-colors"
-            aria-label="Dismiss error"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2 self-end sm:self-center">
+            <button
+              type="button"
+              onClick={handleBrowseClick}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-surface border border-danger/40 text-danger hover:bg-danger hover:text-white transition-all duration-200 ease-out cursor-pointer"
+            >
+              Choose another file
+            </button>
+            <button
+              type="button"
+              onClick={() => setErrorMessage(null)}
+              className="text-danger/70 hover:text-danger p-1.5 rounded hover:bg-white/40 transition-colors"
+              aria-label="Dismiss error"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>
