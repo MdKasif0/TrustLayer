@@ -7,6 +7,7 @@ import {
   TrustLevel,
   TimelineStageStatus,
   QualitativeState,
+  EvidenceTimelineItem,
 } from "@/lib/types";
 
 export interface StageInfo {
@@ -88,8 +89,8 @@ export interface AnalysisService {
 
 /**
  * Deterministic Demo Analysis Service.
- * Implements realistic staged telemetry with deterministic timings,
- * producing structured evidence assessments tailored to the media characteristics.
+ * Produces structured evidence assessments tailored to the media characteristics,
+ * generating a transparent digital forensics assessment report.
  */
 export class DemoAnalysisService implements AnalysisService {
   async analyze(
@@ -215,32 +216,32 @@ export class DemoAnalysisService implements AnalysisService {
       case "ai-detection":
         return {
           status: "complete",
-          qualitativeState: "inconclusive",
-          detail: "Low generative frequency markers; subtle compression artifacts present",
+          qualitativeState: "detected",
+          detail: "Visual patterns associated with synthetic media were detected",
         };
       case "provenance":
         return {
           status: "warning",
           qualitativeState: "not-available",
-          detail: "No cryptographic C2PA Content Credentials manifest found",
+          detail: "No verifiable C2PA Content Credentials were found",
         };
       case "metadata":
         return {
-          status: "complete",
-          qualitativeState: "available",
-          detail: "EXIF tags, byte ordering, and quantization profiles verified",
+          status: "warning",
+          qualitativeState: "suspicious",
+          detail: "File-level metadata contains characteristics requiring further review",
         };
       case "forensics":
         return {
           status: "complete",
-          qualitativeState: "available",
-          detail: "Error Level Analysis (ELA) and PRNU noise floor continuous",
+          qualitativeState: "detected",
+          detail: "Visual inconsistencies were identified in localized compression",
         };
       case "aggregation":
         return {
           status: "complete",
           qualitativeState: "available",
-          detail: "Cross-correlated multi-signal evidence into transparent assessment",
+          detail: "Assessment generated from available evidence across multiple signals",
         };
       default:
         return {
@@ -269,7 +270,7 @@ export class DemoAnalysisService implements AnalysisService {
       case "ai-detection":
         if (phase === "start") return `Applying dual-domain frequency transformation and latent artifact filters...`;
         if (phase === "mid") return `Evaluating Fourier spectrum symmetry and boundary gradient distributions...`;
-        return `AI signal scan complete. Spatial sub-bands exhibit low synthetic probability.`;
+        return `Synthetic patterns detected: anomalous high-frequency grid attenuation in fine textures.`;
 
       case "provenance":
         if (phase === "start") return `Searching ISO/IEC 23008-12 JUMBF box for C2PA manifest assertions...`;
@@ -279,16 +280,16 @@ export class DemoAnalysisService implements AnalysisService {
       case "metadata":
         if (phase === "start") return `Extracting EXIF, XMP, and IPTC dictionary blocks from file header...`;
         if (phase === "mid") return `Comparing JPEG quantization matrices against standard digital camera profiles...`;
-        return `Metadata inspection complete. Header timestamps and device parameters consistent.`;
+        return `Metadata audit complete. Non-standard quantization table entries flagged for review.`;
 
       case "forensics":
         if (phase === "start") return `Running Error Level Analysis (ELA) at 95% re-compression baseline...`;
         if (phase === "mid") return `Scanning for copy-move cloning patterns and localized Laplacian variance...`;
-        return `Forensic analysis complete. Surface noise consistency within nominal capture tolerances.`;
+        return `Forensic analysis complete. Localized compression error rate discrepancies detected.`;
 
       case "aggregation":
         if (phase === "start") return `Cross-referencing multi-signal weights and correlation matrix...`;
-        if (phase === "mid") return `Applying Bayesian confidence bounds to evidence items...`;
+        if (phase === "mid") return `Applying qualitative evidence synthesis logic...`;
         return `Assessment complete. Compiled final multi-signal TrustReport.`;
 
       default:
@@ -303,208 +304,197 @@ export class DemoAnalysisService implements AnalysisService {
   ): TrustReport {
     const isVideo = media.mediaKind === "video";
     const signalResults: AnalysisResult[] = [];
+    const evidenceTimeline: EvidenceTimelineItem[] = [];
 
-    // 1. AI Detection Signal
+    // 1. AI DETECTION CARD
     if (activeSignals.includes("ai-detection")) {
       const items: EvidenceItem[] = [
         {
-          id: "ai-artifact-frequency",
+          id: "ai-frequency-anomalies",
           signalId: "ai-detection",
-          title: "Frequency Domain Anomaly Scan",
-          summary: "Minor high-frequency grid attenuation observed in fine textures; consistent with mild compression or upscaling.",
-          strength: "weak",
-          confidence: 28,
-          details: "Discrete Cosine Transform (DCT) sub-band analysis shows low probability of GAN-induced checkerboard artifacts or latent diffusion grid noise.",
+          title: "Frequency Domain Anomaly",
+          summary: "Periodic high-frequency spectral spikes typical of diffusion upsampling grids.",
+          strength: "strong",
+          confidence: 84,
+          details: "Discrete Cosine Transform (DCT) sub-band analysis reveals periodic micro-lattice distribution across fine focal textures.",
           technicalData: {
-            "Spectral Kurtosis": 3.42,
-            "Checkerboard Index": "0.08 (Low)",
-            "Diffusion Gradient P-Value": 0.31,
+            "Spectral Kurtosis": 4.12,
+            "Checkerboard Discrepancy": "Elevated (0.42)",
+            "Diffusion Latent Metric": "Positive Signal",
           },
         },
         {
-          id: "ai-anatomical-consistency",
+          id: "ai-edge-coherence",
           signalId: "ai-detection",
-          title: isVideo ? "Temporal Coherence Evaluation" : "Facial & Edge Coherence",
+          title: isVideo ? "Temporal Coherence Drift" : "Perceptual Boundary Blending",
           summary: isVideo
-            ? "Inter-frame motion vectors demonstrate natural optical flow without synthetic warping."
-            : "No synthetic blend boundaries or asymmetric perceptual warping detected in focal regions.",
-          strength: "strong",
-          confidence: 86,
-          details: "Gradient magnitude consistency across sharp boundary edges aligns with authentic optical capture standards.",
+            ? "Inter-frame motion flow shows micro-warping across fine focal edge transitions."
+            : "Subtle gradient falloff inconsistencies detected along complex object boundaries.",
+          strength: "moderate",
+          confidence: 76,
+          details: "Spatial gradient magnitudes diverge from optical lens diffusion profiles.",
           technicalData: {
-            "Edge Irregularity Score": 0.12,
-            "Synthetic Boundary Metric": "Negative",
+            "Boundary Delta": "0.28 (Moderate)",
+            "Diffusion Boundary Signature": "Observed",
           },
         },
       ];
 
       signalResults.push({
         signalId: "ai-detection",
-        signalLabel: "AI Detection",
-        status: "analyzed",
-        strength: "moderate",
-        confidence: 82,
-        summary: "Synthetic artifact analysis indicates low probability of full generative synthesis.",
+        signalLabel: "AI DETECTION",
+        signalValue: "HIGH",
+        status: "flagged",
+        strength: "strong",
+        confidence: 85,
+        summary: "Visual patterns associated with synthetic media were detected.",
         items,
-        anomalyDetected: false,
-        qualitativeState: "inconclusive",
+        anomalyDetected: true,
+        qualitativeState: "detected",
+      });
+
+      evidenceTimeline.push({
+        signalName: "AI Detection",
+        signalId: "ai-detection",
+        role: "supporting signal",
+        findingSummary: "Synthetic generation patterns and frequency grid anomalies detected.",
       });
     }
 
-    // 2. Provenance / C2PA Signal
+    // 2. PROVENANCE CARD
     if (activeSignals.includes("provenance")) {
       const items: EvidenceItem[] = [
         {
-          id: "c2pa-manifest",
+          id: "c2pa-credentials-absence",
           signalId: "provenance",
-          title: "Content Credentials (C2PA / CAI)",
+          title: "C2PA / Content Credentials Manifest",
           summary: "No cryptographic C2PA manifest or Coalition for Content Provenance signature present.",
           strength: "inconclusive",
           confidence: 50,
-          details: "Standard web distribution platforms frequently strip JUMBF metadata containers upon upload. Absence is typical for standard camera outputs but limits cryptographic provenance verification.",
+          details: "Standard consumer cameras, social media platforms, and messaging applications routinely strip C2PA JUMBF metadata containers. Absence of provenance credentials indicates lack of verification data, not evidence of manipulation.",
           technicalData: {
             "JUMBF Container": "Not Found",
             "Hardware Keystore": "Unsigned",
-            "Assertion Count": 0,
-          },
-        },
-        {
-          id: "signature-chain",
-          signalId: "provenance",
-          title: "Digital Signature Audit",
-          summary: "No publisher signing certificate detected in container metadata.",
-          strength: "inconclusive",
-          confidence: 45,
-          details: "File does not contain embedded cryptographic attestations. Typical for consumer captures.",
-          technicalData: {
-            "PKI Status": "None",
-            "Root Authority": "Unverified",
+            "Manifest Status": "Unavailable",
           },
         },
       ];
 
       signalResults.push({
         signalId: "provenance",
-        signalLabel: "Provenance / C2PA",
+        signalLabel: "PROVENANCE",
+        signalValue: "NOT FOUND",
         status: "inconclusive",
         strength: "inconclusive",
         confidence: 48,
-        summary: "Absence of cryptographic C2PA credentials prevents origin attestation; common in consumer media.",
+        summary: "No verifiable C2PA Content Credentials were found.",
         items,
         anomalyDetected: false,
         qualitativeState: "not-available",
       });
+
+      evidenceTimeline.push({
+        signalName: "Provenance",
+        signalId: "provenance",
+        role: "unavailable",
+        findingSummary: "No C2PA Content Credentials attached to file container.",
+      });
     }
 
-    // 3. Metadata Signal
+    // 3. METADATA CARD
     if (activeSignals.includes("metadata")) {
       const items: EvidenceItem[] = [
         {
-          id: "meta-exif-headers",
+          id: "meta-header-review",
           signalId: "metadata",
-          title: "Header & Structural Tags",
-          summary: "Container structure is clean with standard header block arrangement.",
+          title: "Quantization & Header Discrepancies",
+          summary: "Quantization table profile and software tags indicate re-encoding by non-standard capture pipelines.",
           strength: "moderate",
-          confidence: 76,
-          details: "File format conventions match standard encoder outputs. No signs of multi-generation hex concatenation.",
+          confidence: 72,
+          details: "Chrominance quantization matrix divergence noted against expected hardware baseline profiles.",
           technicalData: {
-            "Encoding Library": isVideo ? "libavformat / ISOM" : "JFIF / Standard Baseline",
-            "Byte Alignment": "Strict Little-Endian",
-            "Anomalous Padding": "0 bytes",
-          },
-        },
-        {
-          id: "meta-quantization",
-          signalId: "metadata",
-          title: isVideo ? "Codec Compression Matrix" : "JPEG Quantization Profile",
-          summary: isVideo
-            ? "Keyframe GOP structure and bitrate distribution correspond to conventional single-pass encoding."
-            : "Quantization matrix matches standard digital capture profiles without re-encoding discrepancies.",
-          strength: "strong",
-          confidence: 84,
-          details: "No conflicting quantization tables found between thumbnail preview and primary payload.",
-          technicalData: {
-            "Quantization Quality Est.": "92%",
-            "Chroma Subsampling": "4:2:0 YUV",
+            "Quantization Profile": "Non-Standard Matrix",
+            "Header Anomaly": "Re-saved / Post-processed",
+            "Camera Serial": "Unspecified",
           },
         },
       ];
 
       signalResults.push({
         signalId: "metadata",
-        signalLabel: "Metadata",
-        status: "analyzed",
-        strength: "strong",
-        confidence: 80,
-        summary: "File headers and container compression characteristics are consistent and uncorrupted.",
+        signalLabel: "METADATA",
+        signalValue: "SUSPICIOUS",
+        status: "flagged",
+        strength: "moderate",
+        confidence: 74,
+        summary: "File-level metadata contains characteristics requiring further review.",
         items,
-        anomalyDetected: false,
-        qualitativeState: "available",
+        anomalyDetected: true,
+        qualitativeState: "suspicious",
+      });
+
+      evidenceTimeline.push({
+        signalName: "Metadata",
+        signalId: "metadata",
+        role: "supporting signal",
+        findingSummary: "File-level metadata contains characteristics requiring further review.",
       });
     }
 
-    // 4. Forensic Analysis Signal
+    // 4. FORENSICS CARD
     if (activeSignals.includes("forensic")) {
       const items: EvidenceItem[] = [
         {
-          id: "forensic-ela",
+          id: "forensic-ela-inconsistency",
           signalId: "forensic",
-          title: "Error Level Analysis (ELA)",
-          summary: "Uniform compression error dissipation across uniform regions; no localized high-error clusters.",
+          title: "Error Level Analysis (ELA) Variance",
+          summary: "Discrepancy in compression error rates detected between focal foreground and background regions.",
           strength: "strong",
-          confidence: 88,
-          details: "Resaved baseline at 95% shows uniform error variance. Spliced objects would typically reveal sharp divergent error levels.",
+          confidence: 82,
+          details: "Resaved compression baseline shows localized error level clustering characteristic of selective manipulation or localized synthetic blending.",
           technicalData: {
-            "Max Localized Delta": "12.4 (Uniform)",
-            "Anomaly Cluster Threshold": "Exceeded: False",
-          },
-        },
-        {
-          id: "forensic-noise-sensor",
-          signalId: "forensic",
-          title: "Photo-Response Non-Uniformity (PRNU) Check",
-          summary: "Sensor noise pattern appears contiguous across quadrant boundaries.",
-          strength: "moderate",
-          confidence: 75,
-          details: "High-pass spatial filtering confirms continuous noise floor without abrupt localized smoothing.",
-          technicalData: {
-            "Noise Floor RMS": "0.014",
-            "Discontinuity Index": "0.04 (Low)",
+            "Localized Error Delta": "28.6% (Elevated)",
+            "Noise Floor RMS Variance": "Discontinuous",
           },
         },
       ];
 
       signalResults.push({
         signalId: "forensic",
-        signalLabel: "Forensic Analysis",
-        status: "analyzed",
+        signalLabel: "FORENSICS",
+        signalValue: "DETECTED",
+        status: "flagged",
         strength: "strong",
-        confidence: 85,
-        summary: "Forensic error level analysis and sensor noise floor show continuous, authentic capture properties.",
+        confidence: 81,
+        summary: "Visual inconsistencies were identified.",
         items,
-        anomalyDetected: false,
-        qualitativeState: "available",
+        anomalyDetected: true,
+        qualitativeState: "detected",
+      });
+
+      evidenceTimeline.push({
+        signalName: "Forensics",
+        signalId: "forensic",
+        role: "supporting signal",
+        findingSummary: "Visual inconsistencies and compression variances identified.",
       });
     }
 
-    // Calculate aggregated overall score
-    const analyzedSignals = signalResults.filter((s) => s.status === "analyzed");
-    const avgConfidence = analyzedSignals.length > 0
-      ? Math.round(analyzedSignals.reduce((acc, s) => acc + s.confidence, 0) / analyzedSignals.length)
-      : 65;
+    const now = new Date();
+    const formattedAnalyzedAt = now.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
 
-    let overallTrustLevel: TrustLevel = "likely-authentic";
-    let verdictTitle = "Likely Authentic";
-    let verdictSummary = "Multi-signal evaluation found no substantial synthetic indicators or forensic manipulation artifacts. Provenance credentials are unverified as typical for standard consumer media.";
-
-    if (activeSignals.length === 1 && activeSignals[0] === "provenance") {
-      overallTrustLevel = "uncertain";
-      verdictTitle = "Uncertain";
-      verdictSummary = "Cryptographic provenance credentials were not detected, and no corroborating forensic or AI detection signals were enabled.";
-    }
+    const reportRef = `TL-${now.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     return {
-      id: `report-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+      id: `report-${Date.now().toString(36)}`,
+      reportReferenceId: reportRef,
       mediaFile: {
         id: media.id,
         name: media.name,
@@ -518,22 +508,28 @@ export class DemoAnalysisService implements AnalysisService {
         duration: media.duration,
         hashSha256: media.hashSha256,
       },
-      analyzedAt: new Date().toISOString(),
+      analyzedAt: now.toISOString(),
+      formattedAnalyzedAt,
       executionDurationMs: durationMs,
-      overallTrustLevel,
-      overallConfidence: avgConfidence,
-      verdictTitle,
-      verdictSummary,
+      overallTrustLevel: "suspicious",
+      overallAssessment: "POTENTIALLY SYNTHETIC / MANIPULATED",
+      assessmentConfidence: "MODERATE",
+      evidenceStrengthLabel: "MULTIPLE SIGNALS",
+      overallConfidence: 74,
+      verdictTitle: "Potentially Synthetic / Manipulated",
+      verdictSummary:
+        "Multiple independent evidence signals (AI visual detection, metadata structure, and compression forensics) exhibit indicators consistent with synthetic generation or digital manipulation. Cryptographic provenance credentials were not detected in file headers.",
       activeSignals,
       signalResults,
+      evidenceTimeline,
       keyFindings: [
-        "No evidence of generative AI synthesis or latent diffusion grid patterns detected.",
-        "Forensic error level analysis (ELA) confirms uniform spatial compression.",
-        "No embedded C2PA Content Credentials signature detected in container headers.",
-        "Container structure and byte alignment adhere to nominal capture standards.",
+        "AI Detection: Visual patterns associated with synthetic media were detected.",
+        "Forensics: Localized Error Level Analysis (ELA) compression inconsistencies identified.",
+        "Metadata: File-level metadata contains characteristics requiring further review.",
+        "Provenance: No verifiable C2PA Content Credentials found (lack of provenance is common in consumer media and does not prove manipulation).",
       ],
       disclaimer:
-        "TrustLayer provides automated multi-signal evidence assessments, not absolute certainty. Verification results should be considered alongside context, chain of custody, and human review.",
+        "TrustLayer provides an evidence-based assessment, not absolute proof of authenticity or manipulation.",
     };
   }
 }

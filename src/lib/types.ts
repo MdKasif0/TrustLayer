@@ -50,10 +50,18 @@ export interface EvidenceItem {
   technicalData?: Record<string, string | number | boolean>;
 }
 
+export interface EvidenceTimelineItem {
+  signalName: string;
+  signalId: AnalysisSignalType;
+  role: "supporting signal" | "unavailable" | "neutral" | "contradictory";
+  findingSummary: string;
+}
+
 export interface AnalysisResult {
   signalId: AnalysisSignalType;
   signalLabel: string;
   status: "analyzed" | "flagged" | "inconclusive" | "skipped";
+  signalValue?: string; // e.g., "HIGH", "NOT FOUND", "SUSPICIOUS", "DETECTED"
   strength: EvidenceStrength;
   confidence: number; // 0–100
   summary: string;
@@ -74,6 +82,7 @@ export interface ProcessingStage {
 
 export interface TrustReport {
   id: string;
+  reportReferenceId: string;
   mediaFile: {
     id: string;
     name: string;
@@ -88,13 +97,18 @@ export interface TrustReport {
     hashSha256?: string;
   };
   analyzedAt: string;
+  formattedAnalyzedAt: string;
   executionDurationMs: number;
   overallTrustLevel: TrustLevel;
-  overallConfidence: number; // 0–100
+  overallAssessment: string; // e.g., "POTENTIALLY SYNTHETIC / MANIPULATED"
+  assessmentConfidence: "LOW" | "MODERATE" | "HIGH";
+  evidenceStrengthLabel: string; // e.g., "MULTIPLE SIGNALS"
+  overallConfidence: number; // 0–100 for backwards compatibility
   verdictTitle: string;
   verdictSummary: string;
   activeSignals: AnalysisSignalType[];
   signalResults: AnalysisResult[];
+  evidenceTimeline: EvidenceTimelineItem[];
   keyFindings: string[];
   disclaimer: string;
 }
