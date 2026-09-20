@@ -36,7 +36,7 @@ export interface DetailedForensicFinding {
 
 export interface MediaFile {
   id: string;
-  file: File;
+  file?: File | Blob;
   name: string;
   size: number;
   type: string; // MIME type
@@ -47,7 +47,7 @@ export interface MediaFile {
   height?: number;
   duration?: number; // In seconds, for videos
   hashSha256?: string;
-  lastModified: number;
+  lastModified?: number;
 }
 
 export interface AnalysisSignal {
