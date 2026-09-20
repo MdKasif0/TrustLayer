@@ -1,158 +1,182 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { FileUploader } from "@/components/ui/FileUploader";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { ProgressStep } from "@/components/ui/ProgressStep";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { ScanSearch, Upload } from "lucide-react";
+import React, { useState, useCallback, useRef } from "react";
+import { MediaFile, AnalysisSignalType, TrustReport } from "@/lib/types";
+import { UploadArea } from "@/components/verify/UploadArea";
+import { MediaPreview } from "@/components/verify/MediaPreview";
+import { SignalConfigPanel } from "@/components/verify/SignalConfigPanel";
+import { AnalysisSidebar } from "@/components/verify/AnalysisSidebar";
+import { ProcessingStages } from "@/components/verify/ProcessingStages";
+import { AssessmentReport } from "@/components/verify/AssessmentReport";
+import { defaultAnalysisService, AnalysisProgress } from "@/lib/services/analysisService";
+import { ShieldCheck, ShieldAlert, History } from "lucide-react";
 
-type VerifyState = "idle" | "ready" | "analyzing";
-
-const analysisSteps = [
-  { label: "Upload received", description: "File validated and queued", status: "pending" as const },
-  { label: "AI generation detection", description: "Scanning for synthetic patterns", status: "pending" as const },
-  { label: "Provenance analysis", description: "Checking C2PA and digital signatures", status: "pending" as const },
-  { label: "Metadata extraction", description: "Parsing EXIF, XMP, and file headers", status: "pending" as const },
-  { label: "Forensic analysis", description: "Examining compression and noise patterns", status: "pending" as const },
-  { label: "Report generation", description: "Compiling evidence-based assessment", status: "pending" as const },
-];
+type WorkspaceStep = "configure" | "processing" | "report";
 
 export function VerifyPage() {
-  const [state, setState] = useState<VerifyState>("idle");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [step, setStep] = useState<WorkspaceStep>("configure");
+  const [selectedMedia, setSelectedMedia] = useState<MediaFile | null>(null);
+  const [activeSignals, setActiveSignals] = useState<AnalysisSignalType[]>([
+    "ai-detection",
+    "provenance",
+    "metadata",
+    "forensic",
+  ]);
 
-  const handleFileSelect = useCallback((file: File) => {
-    setSelectedFile(file);
-    setState("ready");
+  // Processing state
+  const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
+  const [completedStages, setCompletedStages] = useState<string[]>([]);
+  const [telemetryLog, setTelemetryLog] = useState<string[]>([]);
+  const [overallProgress, setOverallProgress] = useState<number>(0);
+
+  // Completed report state
+  const [trustReport, setTrustReport] = useState<TrustReport | null>(null);
+
+  // Toggle signals in configuration panel
+  const handleToggleSignal = useCallback((signalId: AnalysisSignalType) => {
+    setActiveSignals((prev) =>
+      prev.includes(signalId) ? prev.filter((s) => s !== signalId) : [...prev, signalId]
+    );
   }, []);
 
-  const handleAnalyze = useCallback(() => {
-    if (!selectedFile) return;
-    setState("analyzing");
-    // Analysis will be implemented in a future iteration
-  }, [selectedFile]);
+  // Handle media acceptance from UploadArea
+  const handleFileAccepted = useCallback((media: MediaFile) => {
+    setSelectedMedia(media);
+  }, []);
+
+  // Handle file cancellation / removal
+  const handleRemoveMedia = useCallback(() => {
+    if (selectedMedia?.previewUrl) {
+      URL.revokeObjectURL(selectedMedia.previewUrl);
+    }
+    setSelectedMedia(null);
+    setTrustReport(null);
+    setStep("configure");
+  }, [selectedMedia]);
+
+  // Handle re-upload / replace file
+  const handleReplaceMedia = useCallback(() => {
+    handleRemoveMedia();
+  }, [handleRemoveMedia]);
+
+  // Trigger analysis execution
+  const handleStartVerification = useCallback(async () => {
+    if (!selectedMedia || activeSignals.length === 0) return;
+
+    setStep("processing");
+    setCurrentStageIndex(0);
+    setCompletedStages([]);
+    setOverallProgress(0);
+    setTelemetryLog([
+      `Session initialized for target: ${selectedMedia.name} (${selectedMedia.extension})`,
+      `Active inspection signals: ${activeSignals.join(", ")}`,
+      `Initializing 6-stage evidence assessment pipeline...`,
+    ]);
+
+    try {
+      const report = await defaultAnalysisService.analyze(
+        selectedMedia,
+        activeSignals,
+        (progress: AnalysisProgress) => {
+          setCurrentStageIndex(progress.stageIndex);
+          setCompletedStages(progress.completedStages);
+          setOverallProgress(progress.percentage);
+          setTelemetryLog((prev) => [...prev, progress.telemetry]);
+        }
+      );
+
+      setTrustReport(report);
+      setStep("report");
+    } catch (err: unknown) {
+      console.error("Analysis execution failed:", err);
+      setTelemetryLog((prev) => [
+        ...prev,
+        `FATAL: Analysis pipeline terminated unexpectedly: ${err instanceof Error ? err.message : "Unknown failure"}`,
+      ]);
+    }
+  }, [selectedMedia, activeSignals]);
+
+  // Reset workspace to verify another file
+  const handleReset = useCallback(() => {
+    handleRemoveMedia();
+  }, [handleRemoveMedia]);
 
   return (
-    <div className="py-8 sm:py-12">
+    <div className="py-8 sm:py-12 bg-background min-h-[calc(100vh-64px)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
-        {/* Page header */}
-        <div className="mb-8">
-          <h1 className="mb-2">Verify Media</h1>
-          <p className="text-muted text-sm max-w-lg">
-            Upload an image or video file. TrustLayer will analyze it across
-            multiple evidence categories and produce an assessment.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Upload area */}
-          <div className="lg:col-span-2">
-            <Card padding="lg">
-              <h3 className="text-base font-semibold text-foreground mb-1">
-                Upload a file
-              </h3>
-              <p className="text-sm text-muted mb-4">
-                Supported formats: JPEG, PNG, WebP, GIF, MP4, MOV, WebM
+        {/* Page Header */}
+        <header className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-soft-green px-2.5 py-0.5 rounded border border-[#C1E3CA]">
+                  Workspace
+                </span>
+                <span className="text-xs text-muted">Cyber Safety Verification Engine</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                Verify Media
+              </h1>
+              <p className="text-sm text-muted max-w-2xl mt-1.5 leading-relaxed">
+                Upload an image or video to begin a multi-signal evidence assessment.
               </p>
-
-              <FileUploader
-                onFileSelect={handleFileSelect}
-                className="mb-4"
-              />
-
-              {state === "ready" && (
-                <div className="flex items-center justify-end gap-3 pt-2 border-t border-border mt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedFile(null);
-                      setState("idle");
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    icon={<ScanSearch className="w-4 h-4" />}
-                    onClick={handleAnalyze}
-                  >
-                    Start Analysis
-                  </Button>
-                </div>
-              )}
-
-              {state === "analyzing" && (
-                <div className="pt-4 border-t border-border mt-4">
-                  <p className="text-sm font-medium text-foreground mb-3">
-                    Analysis pipeline
-                  </p>
-                  <ProgressStep
-                    steps={analysisSteps.map((s, i) => ({
-                      ...s,
-                      status: i === 0 ? "complete" : i === 1 ? "active" : "pending",
-                    }))}
-                  />
-                  <p className="text-xs text-muted mt-4">
-                    Full analysis integration will be available in a future release.
-                  </p>
-                </div>
-              )}
-            </Card>
+            </div>
           </div>
+        </header>
 
-          {/* Right: Sidebar info */}
-          <div className="space-y-4">
-            <Card padding="md">
-              <h4 className="text-sm font-semibold text-foreground mb-2">
-                What we analyze
-              </h4>
-              <ul className="space-y-2">
-                {[
-                  "AI generation signals",
-                  "C2PA provenance data",
-                  "EXIF & XMP metadata",
-                  "Compression forensics",
-                  "Copy-move detection",
-                  "Noise consistency",
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-2 text-sm text-muted"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-
-            <Card padding="md" className="bg-warning-bg border-[#E8D5A0]">
-              <h4 className="text-sm font-semibold text-[#92610F] mb-1">
-                Important note
-              </h4>
-              <p className="text-xs text-[#92610F] leading-relaxed">
-                No single signal is definitive. TrustLayer provides
-                evidence-based assessments, not absolute verdicts. Always
-                consider context alongside automated analysis.
-              </p>
-            </Card>
+        {/* Workspace Views */}
+        {step === "report" && trustReport ? (
+          /* Step 3: Completed Assessment Report */
+          <div className="animate-in fade-in duration-200">
+            <AssessmentReport report={trustReport} onReset={handleReset} />
           </div>
-        </div>
-
-        {/* Previous verifications placeholder */}
-        <div className="mt-12">
-          <h2 className="text-lg font-semibold text-foreground mb-4">
-            Recent verifications
-          </h2>
-          <Card padding="none">
-            <EmptyState
-              icon={<Upload className="w-5 h-5" />}
-              title="No verifications yet"
-              description="Your verification history will appear here after you analyze your first file."
+        ) : step === "processing" && selectedMedia ? (
+          /* Step 2: Active 6-Stage Processing Pipeline */
+          <div className="animate-in fade-in duration-200 max-w-4xl mx-auto">
+            <ProcessingStages
+              media={selectedMedia}
+              activeSignals={activeSignals}
+              currentStageIndex={currentStageIndex}
+              completedStages={completedStages}
+              telemetryLog={telemetryLog}
+              overallProgress={overallProgress}
             />
-          </Card>
-        </div>
+          </div>
+        ) : (
+          /* Step 1: Upload & Configuration Workspace */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            {/* Main Interactive Column */}
+            <div className="lg:col-span-2 space-y-6">
+              {!selectedMedia ? (
+                /* Upload Area */
+                <UploadArea onFileAccepted={handleFileAccepted} />
+              ) : (
+                /* Uploaded File Preview */
+                <MediaPreview
+                  media={selectedMedia}
+                  onReplace={handleReplaceMedia}
+                  onRemove={handleRemoveMedia}
+                />
+              )}
+
+              {/* Analysis Configuration Panel */}
+              <SignalConfigPanel
+                activeSignals={activeSignals}
+                onToggleSignal={handleToggleSignal}
+                onStartVerification={handleStartVerification}
+                disabled={!selectedMedia}
+              />
+            </div>
+
+            {/* Sidebar Column: File Metadata & System Readiness */}
+            <div className="lg:col-span-1">
+              <AnalysisSidebar
+                media={selectedMedia}
+                activeSignalCount={activeSignals.length}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
