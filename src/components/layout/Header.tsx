@@ -9,32 +9,31 @@ import { Button } from "@/components/ui/Button";
 import {
   ScanSearch,
   FileText,
-  Info,
   BookOpen,
-  ExternalLink,
   Settings,
   Menu,
   X,
+  Sparkles,
+  HelpCircle,
+  GraduationCap,
 } from "lucide-react";
 
-interface NavLink {
+interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
-  external?: boolean;
 }
 
-const navLinks: NavLink[] = [
+const mainNavItems: NavItem[] = [
   { label: "Verify Media", href: "/verify", icon: ScanSearch },
   { label: "Reports", href: "/reports", icon: FileText },
-  { label: "About", href: "/about", icon: Info },
+  { label: "Research", href: "/about#research-foundations", icon: GraduationCap },
+  { label: "How It Works", href: "/about", icon: HelpCircle },
+];
+
+const secondaryNavItems: NavItem[] = [
   { label: "Documentation", href: "/docs", icon: BookOpen },
-  {
-    label: "GitHub",
-    href: "https://github.com",
-    icon: ExternalLink,
-    external: true,
-  },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Header() {
@@ -42,145 +41,158 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-surface border-b border-border shadow-xs">
+    <header className="sticky top-0 z-40 bg-surface border-b border-border shadow-subtle">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
-          {/* Left: Logo + Nav */}
+          {/* Left: Brand Logo & Primary Navigation */}
           <div className="flex items-center gap-8">
             <Logo />
 
-            {/* Desktop Nav */}
+            {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
-                const Icon = link.icon;
+              {mainNavItems.map((item) => {
+                const isActive =
+                  item.href === "/about#research-foundations"
+                    ? false
+                    : pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"));
 
-                return link.external ? (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150",
-                      "text-muted hover:text-foreground hover:bg-soft-green"
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {link.label}
-                  </a>
-                ) : (
+                const Icon = item.icon;
+
+                return (
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    key={item.label}
+                    href={item.href}
                     className={cn(
-                      "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150",
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 select-none",
                       isActive
-                        ? "text-primary bg-soft-green"
-                        : "text-muted hover:text-foreground hover:bg-soft-green"
+                        ? "text-primary font-semibold bg-very-soft-green border border-border"
+                        : "text-muted hover:text-foreground hover:bg-very-soft-green border border-transparent"
                     )}
                   >
-                    <Icon className="w-4 h-4" />
-                    {link.label}
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
           </div>
 
-          {/* Right: Settings + CTA */}
+          {/* Right Section: Secondary links, Settings & Primary Action CTA */}
           <div className="flex items-center gap-2">
-            <Link
-              href="/settings"
-              className="hidden sm:flex w-8 h-8 items-center justify-center rounded-md text-muted hover:text-foreground hover:bg-soft-green transition-colors"
-              aria-label="Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </Link>
+            {/* Desktop Secondary items */}
+            <div className="hidden md:flex items-center gap-1 mr-1">
+              <Link
+                href="/docs"
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors duration-150",
+                  pathname === "/docs"
+                    ? "text-primary bg-very-soft-green"
+                    : "text-muted hover:text-foreground hover:bg-very-soft-green"
+                )}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Documentation</span>
+              </Link>
 
-            <Link href="/verify" className="hidden sm:block">
-              <Button size="sm" icon={<ScanSearch className="w-3.5 h-3.5" />}>
+              <Link
+                href="/settings"
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors duration-150",
+                  pathname === "/settings"
+                    ? "text-primary bg-very-soft-green"
+                    : "text-muted hover:text-foreground hover:bg-very-soft-green"
+                )}
+                aria-label="Settings"
+                title="Settings"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span>Settings</span>
+              </Link>
+            </div>
+
+            {/* Prominent Verification Action Button */}
+            <Link href="/verify" className="hidden sm:inline-flex">
+              <Button
+                variant="primary"
+                size="sm"
+                icon={<ScanSearch className="w-3.5 h-3.5" />}
+                className="font-semibold text-xs h-8 px-3.5"
+              >
                 Verify Media
               </Button>
             </Link>
 
-            {/* Mobile menu button */}
+            {/* Mobile Menu Toggle Button */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-8 h-8 flex items-center justify-center rounded-md text-muted hover:text-foreground hover:bg-soft-green transition-colors cursor-pointer"
-              aria-label="Toggle menu"
+              className="lg:hidden w-8 h-8 flex items-center justify-center rounded-md text-muted hover:text-foreground hover:bg-very-soft-green transition-colors cursor-pointer border border-transparent"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-border bg-surface">
-          <nav className="max-w-[1280px] mx-auto px-4 sm:px-6 py-3 space-y-1">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              const Icon = link.icon;
+        <div className="lg:hidden border-t border-border bg-surface shadow-md">
+          <nav className="max-w-[1280px] mx-auto px-4 py-3 space-y-1">
+            {mainNavItems.map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
 
-              return link.external ? (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                    "text-muted hover:text-foreground hover:bg-soft-green"
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Icon className="w-4 h-4" />
-                  {link.label}
-                </a>
-              ) : (
+              return (
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  key={item.label}
+                  href={item.href}
                   className={cn(
-                    "flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                    "flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors",
                     isActive
-                      ? "text-primary bg-soft-green"
-                      : "text-muted hover:text-foreground hover:bg-soft-green"
+                      ? "text-primary bg-very-soft-green font-semibold border border-border"
+                      : "text-muted hover:text-foreground hover:bg-very-soft-green"
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Icon className="w-4 h-4" />
-                  {link.label}
+                  <Icon className="w-4 h-4 text-primary" />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
-            <div className="pt-2 border-t border-border">
-              <Link
-                href="/settings"
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                  pathname === "/settings"
-                    ? "text-primary bg-soft-green"
-                    : "text-muted hover:text-foreground hover:bg-soft-green"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Settings className="w-4 h-4" />
-                Settings
-              </Link>
+
+            <div className="pt-2 border-t border-border/80 space-y-1">
+              {secondaryNavItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors",
+                      isActive
+                        ? "text-primary bg-very-soft-green font-semibold border border-border"
+                        : "text-muted hover:text-foreground hover:bg-very-soft-green"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon className="w-4 h-4 text-muted" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
-            <div className="pt-2">
+
+            <div className="pt-3">
               <Link href="/verify" onClick={() => setMobileMenuOpen(false)}>
                 <Button
+                  variant="primary"
                   size="md"
                   icon={<ScanSearch className="w-4 h-4" />}
-                  className="w-full"
+                  className="w-full text-xs"
                 >
                   Verify Media
                 </Button>

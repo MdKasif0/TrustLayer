@@ -26,9 +26,9 @@ export function Card({
   return (
     <div
       className={cn(
-        "bg-surface rounded-lg",
+        "bg-surface rounded-xl shadow-subtle",
         border && "border border-border",
-        hoverable && "transition-shadow duration-150 hover:shadow-[var(--shadow-md)]",
+        hoverable && "transition-colors duration-150 hover:border-border-strong",
         paddingStyles[padding],
         className
       )}
@@ -46,7 +46,7 @@ export function CardHeader({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("flex items-center justify-between mb-4", className)}>
+    <div className={cn("flex items-center justify-between mb-4 pb-3 border-b border-border/80", className)}>
       {children}
     </div>
   );
@@ -62,7 +62,7 @@ export function CardTitle({
   children: React.ReactNode;
 }) {
   return (
-    <Tag className={cn("font-semibold text-foreground", className)}>
+    <Tag className={cn("text-base sm:text-lg font-bold tracking-tight text-foreground", className)}>
       {children}
     </Tag>
   );
