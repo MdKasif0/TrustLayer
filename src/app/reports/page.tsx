@@ -381,11 +381,18 @@ export default function ReportsPage() {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <div className="flex items-center justify-end gap-1">
+                            <Link
+                              href={`/report/${report.id}`}
+                              className="p-1.5 text-muted hover:text-primary transition-colors"
+                              title="Open permalink report"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => setSelectedReportForView(report)}
-                              title="Open report"
+                              title="Quick view"
                               className="p-1.5 h-auto text-muted hover:text-primary"
                             >
                               <Eye className="w-3.5 h-3.5" />
