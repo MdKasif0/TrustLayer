@@ -42,7 +42,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
   };
 
   return (
-    <div className="space-y-10 max-w-[1080px] mx-auto pb-16">
+    <div className="space-y-10 w-full pb-16">
       {/* ─────────────────────────────────────────────────────────────
           PAGE HEADER
       ───────────────────────────────────────────────────────────── */}

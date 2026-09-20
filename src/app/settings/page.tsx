@@ -76,10 +76,7 @@ export default function SettingsPage() {
 
   const handleClearHistory = async () => {
     try {
-      const reports = await reportStorageService.getAllReports();
-      for (const r of reports) {
-        await reportStorageService.deleteReport(r.id);
-      }
+      await reportStorageService.clearAll();
       setConfirmClearOpen(false);
       setClearedNotice(true);
       setTimeout(() => setClearedNotice(false), 3000);
