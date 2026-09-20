@@ -49,6 +49,7 @@ export class DemoAnalysisProvider implements AnalysisProvider {
             completedStages: progress.completedStages,
             evidenceSignalsCollected: progress.evidenceSignalsCollected,
             totalSignals: progress.totalSignals,
+            stageStates: progress.stageStates,
           });
         }
       }

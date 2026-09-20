@@ -21,6 +21,11 @@ export interface AnalysisProgressEvent {
   completedStages: string[];
   evidenceSignalsCollected: number;
   totalSignals: number;
+  stageStates?: Record<string, {
+    status: TimelineStageStatus;
+    qualitativeState?: QualitativeState;
+    detail?: string;
+  }>;
 }
 
 export interface AnalysisOptions {
