@@ -5,6 +5,8 @@ import {
   EvidenceItem,
   TrustReport,
   TrustLevel,
+  TimelineStageStatus,
+  QualitativeState,
 } from "@/lib/types";
 
 export interface StageInfo {
@@ -19,52 +21,61 @@ export const PROCESSING_STAGES: StageInfo[] = [
   {
     number: "01",
     id: "file-inspection",
-    name: "File inspection",
-    defaultDetail: "Validating container format, stream integrity, and cryptographic hash",
+    name: "FILE INSPECTION",
+    defaultDetail: "Validate media structure and basic properties.",
   },
   {
     number: "02",
     id: "ai-detection",
-    name: "AI signal analysis",
+    name: "AI DETECTION",
     signalId: "ai-detection",
-    defaultDetail: "Scanning for diffusion patterns, high-frequency anomalies, and generative artifacts",
+    defaultDetail: "Analyze patterns associated with synthetic media.",
   },
   {
     number: "03",
     id: "provenance",
-    name: "Provenance inspection",
+    name: "PROVENANCE",
     signalId: "provenance",
-    defaultDetail: "Checking C2PA JUMBF manifests, hardware root certificates, and manifest tampering",
+    defaultDetail: "Check C2PA / Content Credentials when available.",
   },
   {
     number: "04",
     id: "metadata",
-    name: "Metadata analysis",
+    name: "METADATA",
     signalId: "metadata",
-    defaultDetail: "Parsing EXIF, XMP, IPTC headers, camera quantization tables, and timezone offsets",
+    defaultDetail: "Inspect EXIF, headers and file-level information.",
   },
   {
     number: "05",
-    id: "forensic",
-    name: "Forensic analysis",
+    id: "forensics",
+    name: "FORENSICS",
     signalId: "forensic",
-    defaultDetail: "Evaluating error level analysis (ELA), clone-detection maps, and sensor noise consistency",
+    defaultDetail: "Analyze visual or temporal inconsistencies.",
   },
   {
     number: "06",
     id: "aggregation",
-    name: "Evidence aggregation",
-    defaultDetail: "Synthesizing cross-signal correlations and computing confidence bounds",
+    name: "EVIDENCE AGGREGATION",
+    defaultDetail: "Combine available signals into a transparent assessment.",
   },
 ];
+
+export interface StageRuntimeState {
+  status: TimelineStageStatus;
+  qualitativeState?: QualitativeState;
+  detail?: string;
+}
 
 export interface AnalysisProgress {
   stageIndex: number; // 0 to 5
   stage: StageInfo;
-  stageStatus: "active" | "complete" | "skipped";
+  stageStatus: TimelineStageStatus;
   telemetry: string;
   percentage: number;
   completedStages: string[];
+  stageStates: Record<string, StageRuntimeState>;
+  evidenceSignalsCollected: number;
+  totalSignals: number;
 }
 
 export interface AnalysisService {
@@ -89,67 +100,155 @@ export class DemoAnalysisService implements AnalysisService {
     const startTime = Date.now();
     const completedStages: string[] = [];
 
+    // Initialize all stage states to pending
+    const stageStates: Record<string, StageRuntimeState> = {};
+    PROCESSING_STAGES.forEach((s) => {
+      stageStates[s.id] = { status: "pending", qualitativeState: "pending", detail: s.defaultDetail };
+    });
+
+    const signalStages = PROCESSING_STAGES.filter((s) => s.signalId && activeSignals.includes(s.signalId));
+    const totalSignals = signalStages.length;
+    let evidenceSignalsCollected = 0;
+
     // Stage timings in ms for realistic, deterministic pacing
-    const stageDurations = [600, 750, 700, 650, 800, 600];
+    const stageDurations = [650, 850, 750, 700, 850, 650];
 
     for (let i = 0; i < PROCESSING_STAGES.length; i++) {
       const stage = PROCESSING_STAGES[i];
       const isSignalStage = Boolean(stage.signalId);
       const isEnabled = !isSignalStage || (stage.signalId && activeSignals.includes(stage.signalId));
 
-      const percentage = Math.round(((i) / PROCESSING_STAGES.length) * 100);
+      const percentage = Math.round((i / PROCESSING_STAGES.length) * 100);
 
       if (!isEnabled) {
+        stageStates[stage.id] = {
+          status: "pending",
+          qualitativeState: "not-available",
+          detail: "Signal disabled in analysis configuration",
+        };
+
         onProgress?.({
           stageIndex: i,
           stage,
-          stageStatus: "skipped",
+          stageStatus: "pending",
           telemetry: `Stage ${stage.number} skipped: signal toggled off in configuration.`,
           percentage,
           completedStages: [...completedStages],
+          stageStates: { ...stageStates },
+          evidenceSignalsCollected,
+          totalSignals,
         });
-        await this.delay(180);
+        await this.delay(160);
         completedStages.push(stage.id);
         continue;
       }
 
-      // Stage Active
+      // 1. Stage Active / In-Progress
+      stageStates[stage.id] = {
+        status: "in-progress",
+        qualitativeState: "evaluating",
+        detail: stage.defaultDetail,
+      };
+
       onProgress?.({
         stageIndex: i,
         stage,
-        stageStatus: "active",
+        stageStatus: "in-progress",
         telemetry: this.getTelemetryMessage(stage.id, media, "start"),
-        percentage: Math.min(percentage + 8, 98),
+        percentage: Math.min(percentage + 6, 98),
         completedStages: [...completedStages],
+        stageStates: { ...stageStates },
+        evidenceSignalsCollected,
+        totalSignals,
       });
 
-      // Mid-stage telemetry bump
+      // Mid-stage telemetry
       await this.delay(stageDurations[i] * 0.55);
       onProgress?.({
         stageIndex: i,
         stage,
-        stageStatus: "active",
+        stageStatus: "in-progress",
         telemetry: this.getTelemetryMessage(stage.id, media, "mid"),
-        percentage: Math.min(percentage + 14, 98),
+        percentage: Math.min(percentage + 12, 98),
         completedStages: [...completedStages],
+        stageStates: { ...stageStates },
+        evidenceSignalsCollected,
+        totalSignals,
       });
 
       await this.delay(stageDurations[i] * 0.45);
       completedStages.push(stage.id);
 
-      // Stage Completed
+      // 2. Stage Final State (Complete / Warning / Failed) with qualitative state
+      const finalState = this.getStageFinalState(stage.id, media);
+      stageStates[stage.id] = finalState;
+
+      if (isSignalStage) {
+        evidenceSignalsCollected += 1;
+      }
+
       onProgress?.({
         stageIndex: i,
         stage,
-        stageStatus: "complete",
+        stageStatus: finalState.status,
         telemetry: this.getTelemetryMessage(stage.id, media, "end"),
         percentage: Math.round(((i + 1) / PROCESSING_STAGES.length) * 100),
         completedStages: [...completedStages],
+        stageStates: { ...stageStates },
+        evidenceSignalsCollected,
+        totalSignals,
       });
     }
 
     const executionDurationMs = Date.now() - startTime;
     return this.generateReport(media, activeSignals, executionDurationMs);
+  }
+
+  private getStageFinalState(stageId: string, media: MediaFile): StageRuntimeState {
+    switch (stageId) {
+      case "file-inspection":
+        return {
+          status: "complete",
+          qualitativeState: "available",
+          detail: `Valid ${media.extension} container (${media.width || "dim"}x${media.height || "dim"}), SHA-256 intact`,
+        };
+      case "ai-detection":
+        return {
+          status: "complete",
+          qualitativeState: "inconclusive",
+          detail: "Low generative frequency markers; subtle compression artifacts present",
+        };
+      case "provenance":
+        return {
+          status: "warning",
+          qualitativeState: "not-available",
+          detail: "No cryptographic C2PA Content Credentials manifest found",
+        };
+      case "metadata":
+        return {
+          status: "complete",
+          qualitativeState: "available",
+          detail: "EXIF tags, byte ordering, and quantization profiles verified",
+        };
+      case "forensics":
+        return {
+          status: "complete",
+          qualitativeState: "available",
+          detail: "Error Level Analysis (ELA) and PRNU noise floor continuous",
+        };
+      case "aggregation":
+        return {
+          status: "complete",
+          qualitativeState: "available",
+          detail: "Cross-correlated multi-signal evidence into transparent assessment",
+        };
+      default:
+        return {
+          status: "complete",
+          qualitativeState: "available",
+          detail: "Completed",
+        };
+    }
   }
 
   private delay(ms: number): Promise<void> {
@@ -170,7 +269,7 @@ export class DemoAnalysisService implements AnalysisService {
       case "ai-detection":
         if (phase === "start") return `Applying dual-domain frequency transformation and latent artifact filters...`;
         if (phase === "mid") return `Evaluating Fourier spectrum symmetry and boundary gradient distributions...`;
-        return `AI signal scan complete. Extracted 3 generative risk markers across spatial sub-bands.`;
+        return `AI signal scan complete. Spatial sub-bands exhibit low synthetic probability.`;
 
       case "provenance":
         if (phase === "start") return `Searching ISO/IEC 23008-12 JUMBF box for C2PA manifest assertions...`;
@@ -182,7 +281,7 @@ export class DemoAnalysisService implements AnalysisService {
         if (phase === "mid") return `Comparing JPEG quantization matrices against standard digital camera profiles...`;
         return `Metadata inspection complete. Header timestamps and device parameters consistent.`;
 
-      case "forensic":
+      case "forensics":
         if (phase === "start") return `Running Error Level Analysis (ELA) at 95% re-compression baseline...`;
         if (phase === "mid") return `Scanning for copy-move cloning patterns and localized Laplacian variance...`;
         return `Forensic analysis complete. Surface noise consistency within nominal capture tolerances.`;
@@ -248,6 +347,7 @@ export class DemoAnalysisService implements AnalysisService {
         summary: "Synthetic artifact analysis indicates low probability of full generative synthesis.",
         items,
         anomalyDetected: false,
+        qualitativeState: "inconclusive",
       });
     }
 
@@ -292,6 +392,7 @@ export class DemoAnalysisService implements AnalysisService {
         summary: "Absence of cryptographic C2PA credentials prevents origin attestation; common in consumer media.",
         items,
         anomalyDetected: false,
+        qualitativeState: "not-available",
       });
     }
 
@@ -338,6 +439,7 @@ export class DemoAnalysisService implements AnalysisService {
         summary: "File headers and container compression characteristics are consistent and uncorrupted.",
         items,
         anomalyDetected: false,
+        qualitativeState: "available",
       });
     }
 
@@ -381,6 +483,7 @@ export class DemoAnalysisService implements AnalysisService {
         summary: "Forensic error level analysis and sensor noise floor show continuous, authentic capture properties.",
         items,
         anomalyDetected: false,
+        qualitativeState: "available",
       });
     }
 
