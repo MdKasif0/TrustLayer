@@ -41,7 +41,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-surface border-b border-border shadow-subtle">
+    <header className="sticky top-0 z-40 bg-surface border-b border-border">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           {/* Left: Brand Logo & Primary Navigation */}
@@ -65,8 +65,8 @@ export function Header() {
                     className={cn(
                       "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 select-none",
                       isActive
-                        ? "text-primary font-semibold bg-very-soft-green border border-border"
-                        : "text-muted hover:text-foreground hover:bg-very-soft-green border border-transparent"
+                        ? "text-primary font-semibold bg-very-soft-green"
+                        : "text-secondary hover:text-foreground hover:bg-very-soft-green/70"
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" />
