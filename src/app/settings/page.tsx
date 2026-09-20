@@ -13,8 +13,10 @@ export default function SettingsPage() {
     <div className="py-8 sm:py-12">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
         <div className="mb-8">
-          <h1 className="mb-2">Settings</h1>
-          <p className="text-muted text-sm max-w-lg">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-2">
+            Settings
+          </h1>
+          <p className="text-muted text-sm max-w-lg leading-relaxed">
             Configure your verification preferences and analysis parameters.
           </p>
         </div>
