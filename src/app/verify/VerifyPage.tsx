@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { MediaFile, AnalysisSignalType, TrustReport } from "@/lib/types";
 import { UploadArea } from "@/components/verify/UploadArea";
 import { MediaPreview } from "@/components/verify/MediaPreview";
 import { SignalConfigPanel } from "@/components/verify/SignalConfigPanel";
 import { AnalysisSidebar } from "@/components/verify/AnalysisSidebar";
-import { ProcessingStages } from "@/components/verify/ProcessingStages";
+import { AnalysisProgressScreen } from "@/components/verify/AnalysisProgressScreen";
 import { AssessmentReport } from "@/components/verify/AssessmentReport";
-import { defaultAnalysisService, AnalysisProgress } from "@/lib/services/analysisService";
-import { ShieldCheck, ShieldAlert, History } from "lucide-react";
+import {
+  defaultAnalysisService,
+  AnalysisProgress,
+  StageRuntimeState,
+} from "@/lib/services/analysisService";
 
 type WorkspaceStep = "configure" | "processing" | "report";
 
@@ -25,9 +28,10 @@ export function VerifyPage() {
 
   // Processing state
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
-  const [completedStages, setCompletedStages] = useState<string[]>([]);
+  const [stageStates, setStageStates] = useState<Record<string, StageRuntimeState>>({});
+  const [evidenceSignalsCollected, setEvidenceSignalsCollected] = useState<number>(0);
+  const [totalSignals, setTotalSignals] = useState<number>(4);
   const [telemetryLog, setTelemetryLog] = useState<string[]>([]);
-  const [overallProgress, setOverallProgress] = useState<number>(0);
 
   // Completed report state
   const [trustReport, setTrustReport] = useState<TrustReport | null>(null);
@@ -65,12 +69,13 @@ export function VerifyPage() {
 
     setStep("processing");
     setCurrentStageIndex(0);
-    setCompletedStages([]);
-    setOverallProgress(0);
+    setEvidenceSignalsCollected(0);
+    setTotalSignals(activeSignals.length);
+    setStageStates({});
     setTelemetryLog([
       `Session initialized for target: ${selectedMedia.name} (${selectedMedia.extension})`,
       `Active inspection signals: ${activeSignals.join(", ")}`,
-      `Initializing 6-stage evidence assessment pipeline...`,
+      `Initializing multi-signal evidence verification pipeline...`,
     ]);
 
     try {
@@ -79,8 +84,9 @@ export function VerifyPage() {
         activeSignals,
         (progress: AnalysisProgress) => {
           setCurrentStageIndex(progress.stageIndex);
-          setCompletedStages(progress.completedStages);
-          setOverallProgress(progress.percentage);
+          setStageStates(progress.stageStates);
+          setEvidenceSignalsCollected(progress.evidenceSignalsCollected);
+          setTotalSignals(progress.totalSignals);
           setTelemetryLog((prev) => [...prev, progress.telemetry]);
         }
       );
@@ -104,25 +110,27 @@ export function VerifyPage() {
   return (
     <div className="py-8 sm:py-12 bg-background min-h-[calc(100vh-64px)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
-        {/* Page Header */}
-        <header className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-soft-green px-2.5 py-0.5 rounded border border-[#C1E3CA]">
-                  Workspace
-                </span>
-                <span className="text-xs text-muted">Cyber Safety Verification Engine</span>
+        {/* Page Header (rendered only when not in active analysis to keep timeline header clean) */}
+        {step !== "processing" && (
+          <header className="mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-soft-green px-2.5 py-0.5 rounded border border-[#C1E3CA]">
+                    Workspace
+                  </span>
+                  <span className="text-xs text-muted">Cyber Safety Verification Engine</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                  Verify Media
+                </h1>
+                <p className="text-sm text-muted max-w-2xl mt-1.5 leading-relaxed">
+                  Upload an image or video to begin a multi-signal evidence assessment.
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                Verify Media
-              </h1>
-              <p className="text-sm text-muted max-w-2xl mt-1.5 leading-relaxed">
-                Upload an image or video to begin a multi-signal evidence assessment.
-              </p>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {/* Workspace Views */}
         {step === "report" && trustReport ? (
@@ -131,15 +139,16 @@ export function VerifyPage() {
             <AssessmentReport report={trustReport} onReset={handleReset} />
           </div>
         ) : step === "processing" && selectedMedia ? (
-          /* Step 2: Active 6-Stage Processing Pipeline */
-          <div className="animate-in fade-in duration-200 max-w-4xl mx-auto">
-            <ProcessingStages
+          /* Step 2: Dedicated Analysis Progress Screen (Two-Column Visual) */
+          <div className="animate-in fade-in duration-200">
+            <AnalysisProgressScreen
               media={selectedMedia}
               activeSignals={activeSignals}
               currentStageIndex={currentStageIndex}
-              completedStages={completedStages}
+              stageStates={stageStates}
+              evidenceSignalsCollected={evidenceSignalsCollected}
+              totalSignals={totalSignals}
               telemetryLog={telemetryLog}
-              overallProgress={overallProgress}
             />
           </div>
         ) : (
