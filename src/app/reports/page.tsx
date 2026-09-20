@@ -244,7 +244,7 @@ export default function ReportsPage() {
               className={cn(
                 "px-3 py-1 text-xs font-mono rounded-lg border transition-colors cursor-pointer",
                 selectedFilter === filter
-                  ? "bg-[#17201A] text-white border-[#17201A] font-semibold"
+                  ? "bg-primary text-white border-primary font-semibold"
                   : "bg-surface text-muted border-border hover:border-border-strong hover:text-foreground"
               )}
             >
@@ -379,7 +379,7 @@ export default function ReportsPage() {
                               {report.status}
                             </span>
                             {report.isDemo && (
-                              <span className="text-[9px] font-mono uppercase bg-[#17201A] text-white px-1 py-0.2 rounded" title="Explicitly labeled demo record">
+                              <span className="text-[9px] font-mono uppercase bg-primary text-white px-1.5 py-0.5 rounded font-bold" title="Explicitly labeled demo record">
                                 DEMO
                               </span>
                             )}
