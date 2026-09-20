@@ -14,6 +14,26 @@ export type QualitativeState =
   | "pending"
   | "evaluating";
 
+export type EvidenceConfidenceLabel = "Strong" | "Moderate" | "Limited" | "Inconclusive";
+export type ProvenanceState = "Verified" | "Not found" | "Invalid" | "Incomplete" | "Unavailable";
+
+export interface MetadataFieldEntry {
+  label: string;
+  value: string;
+  isSuspiciousOrMissing?: boolean;
+  statusText?: string;
+  explanation: string;
+}
+
+export interface DetailedForensicFinding {
+  id: string;
+  category: string;
+  title: string;
+  status: "Detected" | "Normal" | "Suspicious" | "Inconclusive";
+  explanation: string;
+  technicalNote?: string;
+}
+
 export interface MediaFile {
   id: string;
   file: File;
@@ -68,6 +88,7 @@ export interface AnalysisResult {
   items: EvidenceItem[];
   anomalyDetected: boolean;
   qualitativeState?: QualitativeState;
+  evidenceConfidence?: EvidenceConfidenceLabel;
 }
 
 export interface ProcessingStage {

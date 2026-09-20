@@ -6,6 +6,7 @@ import { formatFileSize, formatDuration } from "@/lib/services/fileInspector";
 import { Button } from "@/components/ui/Button";
 import { ReportExportModal } from "@/components/verify/ReportExportModal";
 import { ReportShareModal } from "@/components/verify/ReportShareModal";
+import { EvidenceDetailsSection } from "@/components/verify/EvidenceDetailsSection";
 import {
   RotateCcw,
   Download,
@@ -552,6 +553,9 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
           </span>
         </div>
       </div>
+
+      {/* DETAILED EVIDENCE INVESTIGATION DOSSIER */}
+      <EvidenceDetailsSection report={report} />
 
       {/* IMPORTANT DISCLAIMER NOTICE */}
       <div className="border border-[#E8D5A0] rounded-xl bg-warning-bg p-5 flex items-start gap-3.5 shadow-xs">
