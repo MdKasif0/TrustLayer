@@ -1,10 +1,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
-type ButtonSize = "sm" | "md" | "lg";
+export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+export type ButtonSize = "sm" | "md" | "lg";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   icon?: React.ReactNode;
@@ -13,21 +13,21 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-hover active:bg-[#0B3319] border-transparent",
+    "bg-primary text-white hover:bg-primary-hover active:bg-[#0B3319] border-transparent shadow-subtle",
   secondary:
-    "bg-soft-green text-primary hover:bg-[#D5ECDB] active:bg-[#C1E3CA] border-transparent",
+    "bg-surface text-primary border border-primary hover:bg-very-soft-green active:bg-soft-green shadow-subtle",
   outline:
-    "bg-transparent text-foreground hover:bg-soft-green active:bg-[#D5ECDB] border-border",
+    "bg-surface text-foreground border-border hover:bg-very-soft-green hover:border-border-strong shadow-subtle",
   ghost:
-    "bg-transparent text-muted hover:text-foreground hover:bg-soft-green active:bg-[#D5ECDB] border-transparent",
+    "bg-transparent text-muted hover:text-foreground hover:bg-very-soft-green border-transparent",
   danger:
-    "bg-danger text-white hover:bg-[#9A1E14] active:bg-[#821912] border-transparent",
+    "bg-danger text-white hover:bg-[#9A1E14] active:bg-[#821912] border-transparent shadow-subtle",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "text-[13px] px-3 py-1.5 gap-1.5",
-  md: "text-sm px-4 py-2 gap-2",
-  lg: "text-[15px] px-5 py-2.5 gap-2",
+  sm: "text-xs px-3 py-1.5 gap-1.5 h-8 font-medium rounded-md",
+  md: "text-xs sm:text-sm px-4 py-2 gap-2 h-9 font-medium rounded-md",
+  lg: "text-sm px-5 py-2.5 gap-2 h-10 font-semibold rounded-md",
 };
 
 export function Button({
@@ -38,12 +38,14 @@ export function Button({
   disabled,
   className,
   children,
+  type = "button",
   ...props
 }: ButtonProps) {
   return (
     <button
+      type={type}
       className={cn(
-        "inline-flex items-center justify-center font-medium rounded-md border",
+        "inline-flex items-center justify-center border font-sans select-none",
         "transition-colors duration-150 cursor-pointer",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
         variantStyles[variant],
@@ -51,13 +53,15 @@ export function Button({
         className
       )}
       disabled={disabled || loading}
+      aria-busy={loading}
       {...props}
     >
       {loading ? (
         <svg
-          className="animate-spin h-4 w-4"
+          className="animate-spin h-3.5 w-3.5"
           viewBox="0 0 24 24"
           fill="none"
+          aria-hidden="true"
         >
           <circle
             className="opacity-25"

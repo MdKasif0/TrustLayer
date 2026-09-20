@@ -7,8 +7,9 @@
   --primary: #14532D;
   --primary-hover: #0F4023;
   --secondary: #2F6B4F;
-  --muted: #647067;
+  --muted: #66736A;
   --soft-green: #EAF4ED;
+  --very-soft-green: #F4F8F4;
   --border: #DDE3DE;
   --border-strong: #C4CCC6;
   --warning: #B7791F;
@@ -17,9 +18,8 @@
   --danger-bg: #FEF0EF;
   --success: #28734A;
   --success-bg: #ECF7EF;
-  --shadow-sm: 0 1px 2px rgba(23, 32, 26, 0.05);
-  --shadow-md: 0 2px 8px rgba(23, 32, 26, 0.08);
-  --shadow-lg: 0 4px 16px rgba(23, 32, 26, 0.10);
+  --shadow-subtle: 0 1px 2px rgba(23, 32, 26, 0.04);
+  --shadow-card: 0 1px 3px rgba(23, 32, 26, 0.05), 0 1px 2px rgba(23, 32, 26, 0.03);
 }
 
 @theme inline {
@@ -31,6 +31,7 @@
   --color-secondary: var(--secondary);
   --color-muted: var(--muted);
   --color-soft-green: var(--soft-green);
+  --color-very-soft-green: var(--very-soft-green);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-warning: var(--warning);
@@ -58,19 +59,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
-  letter-spacing: -0.01em;
-  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--foreground);
-}
-
-h1 { font-size: 1.875rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.125rem; }
-
-@media (min-width: 768px) {
-  h1 { font-size: 2.25rem; }
-  h2 { font-size: 1.75rem; }
 }
 
 /* ── Focus States ────────────────────────────────── */
@@ -120,4 +110,3 @@ h4 { font-size: 1.125rem; }
     scroll-behavior: auto !important;
   }
 }
-
