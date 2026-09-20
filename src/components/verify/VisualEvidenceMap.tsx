@@ -155,7 +155,7 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
 
         {/* Live Diagnostics Tag */}
         <div className="absolute bottom-3 left-3 pointer-events-none">
-          <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded bg-black/80 text-white/90 border border-white/15 backdrop-blur-xs flex items-center gap-1.5">
+          <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded bg-[#17201A] text-white/90 border border-[#2F6B4F]/40 flex items-center gap-1.5">
             <Scan className="w-3 h-3 text-[#86EFAC]" />
             Inspection Layer: {activeLayer.toUpperCase()}
           </span>

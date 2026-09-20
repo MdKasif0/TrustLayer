@@ -28,7 +28,7 @@ export default function HomePage() {
           HERO: SPLIT-SCREEN
           ══════════════════════════════════════════════════════════ */}
       <section className="pt-14 pb-16 sm:pt-20 sm:pb-20 border-b border-border">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-12 items-center">
             {/* LEFT COLUMN */}
             <div className="lg:col-span-7">
@@ -92,7 +92,7 @@ export default function HomePage() {
           HERO LOWER AREA: COMPACT CREDIBILITY STRIP
           ══════════════════════════════════════════════════════════ */}
       <div className="border-b border-border bg-[#F7F9F7]">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 py-3.5">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs font-mono">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold uppercase tracking-wider bg-soft-green text-primary px-2 py-0.5 rounded border border-[#C1E3CA]">
@@ -121,7 +121,7 @@ export default function HomePage() {
           Minimalist, editorial spacing, fine separators
           ══════════════════════════════════════════════════════════ */}
       <section className="py-20 border-b border-border">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-primary mb-2 block">
               EVIDENTIARY ARCHITECTURE
@@ -245,7 +245,7 @@ export default function HomePage() {
           Horizontal 4-step visual with simple icon & one sentence
           ══════════════════════════════════════════════════════════ */}
       <section className="py-20 border-b border-border">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-primary mb-2 block">
               VERIFICATION PIPELINE
@@ -352,7 +352,7 @@ export default function HomePage() {
           4 audience categories with restrained iconography
           ══════════════════════════════════════════════════════════ */}
       <section className="py-20 border-b border-border">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-primary mb-2 block">
               PROFESSIONAL APPLICATIONS
@@ -431,7 +431,7 @@ export default function HomePage() {
           FINAL CTA
           ══════════════════════════════════════════════════════════ */}
       <section className="py-20 sm:py-24">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
           <div className="border border-border rounded-2xl bg-surface p-8 sm:p-14 text-center max-w-3xl mx-auto shadow-subtle">
             <div className="w-12 h-12 rounded-xl bg-soft-green border border-[#C1E3CA] text-primary flex items-center justify-center mx-auto mb-6">
               <ScanSearch className="w-6 h-6" />

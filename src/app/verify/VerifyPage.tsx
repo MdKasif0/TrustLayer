@@ -129,7 +129,7 @@ export function VerifyPage() {
 
   return (
     <div className="py-8 sm:py-12 bg-background min-h-[calc(100vh-64px)] text-foreground">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
         {/* Page Header (Rendered during configuration to set the clear investigative tone) */}
         {step !== "processing" && (
           <header className="mb-8 pb-4 border-b border-border">

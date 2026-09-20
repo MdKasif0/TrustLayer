@@ -144,7 +144,7 @@ export function MediaPreview({
 
         {/* Verified Container Pill */}
         <div className="absolute top-3 left-3 pointer-events-none">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface/95 text-foreground text-[11px] font-mono font-semibold border border-border shadow-xs backdrop-blur-xs">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface text-foreground text-[11px] font-mono font-semibold border border-border shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
             Integrity Verified
           </span>

@@ -19,11 +19,11 @@ export function ReportDetailModal({ report, isOpen, onClose }: ReportDetailModal
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 bg-black/60 overflow-y-auto"
     >
       <div className="relative w-full max-w-5xl my-4 sm:my-8 bg-background rounded-2xl border border-border shadow-xl overflow-hidden animate-in fade-in duration-200">
         {/* Navigation Bar */}
-        <div className="sticky top-0 z-30 px-6 py-3.5 border-b border-border bg-surface/95 backdrop-blur-md flex items-center justify-between gap-4">
+        <div className="sticky top-0 z-30 px-6 py-3.5 border-b border-border bg-surface flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button
               variant="outline"

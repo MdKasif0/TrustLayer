@@ -24,7 +24,7 @@ export function DeleteConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
     >
       <div className="relative w-full max-w-md bg-surface rounded-xl border border-border shadow-lg p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-start justify-between gap-3">

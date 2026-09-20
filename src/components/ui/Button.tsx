@@ -13,15 +13,15 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-hover active:bg-[#0B3319] border-transparent shadow-subtle",
+    "bg-primary text-white hover:bg-primary-hover active:bg-[#0B3319] border-transparent shadow-subtle focus-visible:ring-primary",
   secondary:
-    "bg-surface text-primary border border-primary hover:bg-very-soft-green active:bg-soft-green shadow-subtle",
+    "bg-surface text-primary border border-primary hover:bg-very-soft-green active:bg-soft-green shadow-subtle focus-visible:ring-primary",
   outline:
-    "bg-surface text-foreground border-border hover:bg-very-soft-green hover:border-border-strong shadow-subtle",
+    "bg-surface text-foreground border-border hover:bg-very-soft-green hover:border-border-strong shadow-subtle focus-visible:ring-primary",
   ghost:
-    "bg-transparent text-muted hover:text-foreground hover:bg-very-soft-green border-transparent",
+    "bg-transparent text-muted hover:text-foreground hover:bg-very-soft-green border-transparent focus-visible:ring-primary",
   danger:
-    "bg-danger text-white hover:bg-[#9A1E14] active:bg-[#821912] border-transparent shadow-subtle",
+    "bg-[#991B1B] text-white hover:bg-[#7F1D1D] active:bg-[#5E1414] border-transparent shadow-subtle focus-visible:ring-[#991B1B]",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -46,7 +46,8 @@ export function Button({
       type={type}
       className={cn(
         "inline-flex items-center justify-center border font-sans select-none",
-        "transition-colors duration-150 cursor-pointer",
+        "transition-all duration-200 ease-out cursor-pointer",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
         variantStyles[variant],
         sizeStyles[size],

@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 export function Footer() {
   return (
     <footer className="border-t border-border bg-surface text-foreground">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 py-10">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-10">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-border">
           {/* Brand & Subtitle */}
           <div className="space-y-2">
