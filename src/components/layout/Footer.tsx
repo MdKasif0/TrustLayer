@@ -1,57 +1,55 @@
 import React from "react";
+import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { Shield } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-surface">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          {/* Left */}
-          <div className="flex flex-col gap-3">
+    <footer className="border-t border-border bg-surface text-foreground">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 py-10">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-border">
+          {/* Brand & Subtitle */}
+          <div className="space-y-2">
             <Logo />
-            <div className="flex items-center gap-2">
-              <Shield className="w-3.5 h-3.5 text-secondary" />
-              <span className="text-xs font-semibold tracking-[0.06em] uppercase text-secondary">
-                Viksit Bharat Ideathon 2026
-              </span>
+            <div className="space-y-0.5 text-xs text-muted font-mono">
+              <p className="font-semibold text-foreground">Digital Media Verification</p>
+              <p>Cyber Safety</p>
             </div>
-            <p className="text-[11px] text-muted">
-              Theme: Cyber Safety
-            </p>
           </div>
 
-          {/* Right */}
-          <nav className="flex flex-wrap items-center gap-4 text-sm text-muted">
-            <a href="/verify" className="hover:text-foreground transition-colors">
-              Verify
-            </a>
-            <a href="/reports" className="hover:text-foreground transition-colors">
-              Reports
-            </a>
-            <a href="/about" className="hover:text-foreground transition-colors">
-              About
-            </a>
-            <a href="/docs" className="hover:text-foreground transition-colors">
-              Docs
-            </a>
-            <a
-              href="https://github.com/MdKasif0/TrustLayer"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
+          {/* Core Footer Navigation Links */}
+          <nav className="flex flex-wrap items-center gap-6 sm:gap-8 text-xs font-mono">
+            <Link
+              href="/about#research-foundations"
+              className="text-muted hover:text-foreground transition-colors"
             >
-              GitHub
-            </a>
+              Research
+            </Link>
+            <Link
+              href="/about"
+              className="text-muted hover:text-foreground transition-colors"
+            >
+              Methodology
+            </Link>
+            <Link
+              href="/reports"
+              className="text-muted hover:text-foreground transition-colors"
+            >
+              Reports
+            </Link>
+            <Link
+              href="/docs"
+              className="text-muted hover:text-foreground transition-colors"
+            >
+              Documentation
+            </Link>
           </nav>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <p className="text-[11px] text-muted">
-            © {new Date().getFullYear()} TrustLayer. Evidence-based digital media verification.
-          </p>
-          <p className="text-[11px] text-muted">
-            Not a guarantee of detection. Use alongside professional judgment.
+        {/* Legal & Trust Statement */}
+        <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-muted font-mono">
+          <p>© {new Date().getFullYear()} TrustLayer. Evidence-based digital media verification.</p>
+          <p className="text-[11px] text-muted/80">
+            Evidence-based assessment. Not absolute certainty.
           </p>
         </div>
       </div>
