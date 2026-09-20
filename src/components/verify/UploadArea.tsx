@@ -2,8 +2,13 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { Upload, AlertCircle, Shield, FileCheck, X } from "lucide-react";
-import { validateMediaFile, inspectMediaDimensions, computeSha256, sanitizeFilename } from "@/lib/services/fileInspector";
+import { Upload, AlertCircle, Shield, X, FileUp } from "lucide-react";
+import {
+  validateMediaFile,
+  inspectMediaDimensions,
+  computeSha256,
+  sanitizeFilename,
+} from "@/lib/services/fileInspector";
 import { MediaFile } from "@/lib/types";
 
 interface UploadAreaProps {
@@ -12,16 +17,22 @@ interface UploadAreaProps {
   disabled?: boolean;
 }
 
-export function UploadArea({ onFileAccepted, className, disabled = false }: UploadAreaProps) {
+export function UploadArea({
+  onFileAccepted,
+  className,
+  disabled = false,
+}: UploadAreaProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback(
     async (rawFile: File) => {
       setErrorMessage(null);
       setIsProcessing(true);
+      setProcessingStatus("Validating file format and size...");
 
       // 1. Format & Size Validation
       const validation = validateMediaFile(rawFile);
@@ -38,13 +49,16 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
         rawFile.name.toLowerCase().endsWith(".mov");
 
       const previewUrl = URL.createObjectURL(rawFile);
-      const ext = rawFile.name.split(".").pop()?.toLowerCase() || (isVideo ? "mp4" : "jpg");
+      const ext =
+        rawFile.name.split(".").pop()?.toLowerCase() || (isVideo ? "mp4" : "jpg");
 
       try {
         // 2. Corrupted file inspection & dimension extraction
+        setProcessingStatus("Inspecting container dimensions...");
         const dimensions = await inspectMediaDimensions(rawFile, previewUrl);
 
         // 3. Client-side SHA-256 computation for forensic integrity
+        setProcessingStatus("Computing SHA-256 cryptographic digest...");
         const hashSha256 = await computeSha256(rawFile);
 
         const safeName = sanitizeFilename(rawFile.name);
@@ -66,9 +80,11 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
         };
 
         setIsProcessing(false);
+        setProcessingStatus("");
         onFileAccepted(mediaFile);
       } catch (err: unknown) {
         setIsProcessing(false);
+        setProcessingStatus("");
         URL.revokeObjectURL(previewUrl);
         const errorMsg =
           err instanceof Error
@@ -129,7 +145,7 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
 
   return (
     <div className={cn("w-full", className)}>
-      {/* Upload Dropzone */}
+      {/* Premium Drop Zone (Solid 1px border, calm light theme, no generic dashed rectangle) */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -145,10 +161,10 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
           }
         }}
         className={cn(
-          "relative border-2 border-dashed rounded-xl p-8 sm:p-12 text-center transition-all duration-150 cursor-pointer bg-surface",
+          "relative border rounded-xl p-8 sm:p-14 text-center transition-all duration-150 cursor-pointer bg-surface shadow-subtle select-none",
           isDragOver
-            ? "border-primary bg-soft-green ring-4 ring-soft-green"
-            : "border-border hover:border-border-strong hover:bg-[#FAFBF9]",
+            ? "border-primary bg-soft-green ring-2 ring-primary/30"
+            : "border-border hover:border-primary/50 hover:bg-[#FAFBF9]",
           errorMessage ? "border-danger/60" : "",
           disabled && "opacity-60 cursor-not-allowed pointer-events-none"
         )}
@@ -163,70 +179,84 @@ export function UploadArea({ onFileAccepted, className, disabled = false }: Uplo
         />
 
         <div className="max-w-md mx-auto flex flex-col items-center">
-          {/* Central Icon */}
+          {/* Central Upload Icon */}
           <div
             className={cn(
-              "w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors",
-              isDragOver ? "bg-primary text-white" : "bg-soft-green text-primary border border-[#D5ECDB]"
+              "w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-colors",
+              isDragOver
+                ? "bg-primary text-white"
+                : "bg-very-soft-green text-primary border border-border"
             )}
           >
             {isProcessing ? (
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Upload className="w-6 h-6" />
+              <Upload className="w-5 h-5" />
             )}
           </div>
 
-          {/* Primary & Secondary copy */}
-          <h2 className="text-lg font-semibold text-foreground tracking-tight mb-1">
-            Drop an image or video here
-          </h2>
-          <p className="text-sm text-muted mb-4">
+          {/* Title & Subtitle */}
+          <h3 className="text-lg font-bold text-foreground tracking-tight mb-1.5">
+            Drop media here
+          </h3>
+          <p className="text-xs sm:text-sm text-muted mb-5">
             or{" "}
-            <span className="text-primary font-medium underline underline-offset-4 hover:text-primary-hover">
+            <span className="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">
               choose a file
             </span>{" "}
-            from your device
+            from your system
           </p>
 
-          {/* Supported Formats & File Size Display */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
-            <span className="inline-flex items-center text-xs font-mono font-medium px-2 py-1 rounded bg-[#F0F2F0] text-foreground border border-border">
-              JPG
-            </span>
-            <span className="inline-flex items-center text-xs font-mono font-medium px-2 py-1 rounded bg-[#F0F2F0] text-foreground border border-border">
-              PNG
-            </span>
-            <span className="inline-flex items-center text-xs font-mono font-medium px-2 py-1 rounded bg-[#F0F2F0] text-foreground border border-border">
-              WEBP
-            </span>
-            <span className="inline-flex items-center text-xs font-mono font-medium px-2 py-1 rounded bg-[#F0F2F0] text-foreground border border-border">
-              MP4
-            </span>
-            <span className="inline-flex items-center text-xs font-mono font-medium px-2 py-1 rounded bg-[#F0F2F0] text-foreground border border-border">
-              MOV
-            </span>
-            <span className="text-xs text-muted pl-1">· Maximum file size: 50 MB</span>
+          {/* Supported Format Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 mb-4 font-mono text-[11px]">
+            {["JPG", "PNG", "WEBP", "MP4", "MOV"].map((format) => (
+              <span
+                key={format}
+                className="px-2 py-0.5 rounded bg-very-soft-green text-foreground border border-border font-medium"
+              >
+                {format}
+              </span>
+            ))}
           </div>
 
+          {/* File Size Limit Notice */}
+          <p className="text-xs text-muted font-mono mb-5">
+            Maximum file size: 50 MB
+          </p>
+
+          {/* Processing Feedback */}
+          {isProcessing && (
+            <div className="w-full max-w-xs mb-4 p-3 bg-very-soft-green rounded-lg border border-border text-left">
+              <div className="flex items-center gap-2 mb-1 text-xs font-mono text-primary font-semibold">
+                <FileUp className="w-3.5 h-3.5 animate-bounce" />
+                <span>Processing Media Container</span>
+              </div>
+              <p className="text-[11px] text-muted font-mono truncate">
+                {processingStatus}
+              </p>
+            </div>
+          )}
+
           {/* Privacy Statement */}
-          <div className="inline-flex items-center gap-1.5 text-xs text-muted/90 bg-[#FAFBF9] px-3 py-1.5 rounded-full border border-border/80">
-            <Shield className="w-3.5 h-3.5 text-primary" />
-            <span>Your media is analyzed only for verification purposes.</span>
+          <div className="inline-flex items-center gap-2 text-xs text-muted bg-[#FAFBF9] px-3.5 py-1.5 rounded-full border border-border">
+            <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span>Files are analyzed securely for verification purposes.</span>
           </div>
         </div>
       </div>
 
-      {/* Error Message Display */}
+      {/* Validation Error Alert */}
       {errorMessage && (
         <div
           role="alert"
-          className="mt-4 p-3.5 bg-danger-bg border border-[#F0C5C1] rounded-lg flex items-start justify-between gap-3 text-sm text-danger animate-in fade-in duration-200"
+          className="mt-4 p-4 bg-danger-bg border border-[#F0C5C1] rounded-xl flex items-start justify-between gap-3 text-sm text-danger animate-in fade-in duration-200"
         >
           <div className="flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-xs uppercase tracking-wider mb-0.5">Upload Error</p>
+              <p className="font-semibold text-xs uppercase tracking-wider mb-0.5">
+                Upload Validation Error
+              </p>
               <p className="text-xs sm:text-sm text-danger/90">{errorMessage}</p>
             </div>
           </div>
