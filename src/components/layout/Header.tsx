@@ -115,8 +115,8 @@ export function Header() {
               <Button
                 variant="primary"
                 size="sm"
-                icon={<ScanSearch className="w-3.5 h-3.5" />}
-                className="font-semibold text-xs h-8 px-3.5"
+                icon={<ScanSearch className="w-[15px] h-[15px]" />}
+                className="w-[136px] h-[38px] rounded-[9px] text-[13px]"
               >
                 Verify Media
               </Button>
