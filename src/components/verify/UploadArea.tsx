@@ -268,17 +268,18 @@ export function UploadArea({
             </div>
           </div>
           <div className="flex items-center gap-2 self-end sm:self-center">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={handleBrowseClick}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-surface border border-danger/40 text-danger hover:bg-danger hover:text-white transition-all duration-200 ease-out cursor-pointer"
             >
               Choose another file
-            </button>
+            </Button>
             <button
               type="button"
               onClick={() => setErrorMessage(null)}
-              className="text-danger/70 hover:text-danger p-1.5 rounded hover:bg-white/40 transition-colors"
+              className="text-danger/70 hover:text-danger p-1.5 rounded-md hover:bg-white/40 transition-colors"
               aria-label="Dismiss error"
             >
               <X className="w-4 h-4" />
