@@ -10,6 +10,7 @@ import {
   sanitizeFilename,
 } from "@/lib/services/fileInspector";
 import { MediaFile } from "@/lib/types";
+import { Button } from "@/components/ui/Button";
 
 interface UploadAreaProps {
   onFileAccepted: (mediaFile: MediaFile) => void;
