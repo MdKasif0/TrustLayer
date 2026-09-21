@@ -155,7 +155,7 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
 
         {/* Live Diagnostics Tag */}
         <div className="absolute bottom-3 left-3 pointer-events-none">
-          <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded bg-[#17201A] text-white/90 border border-[#2F6B4F]/40 flex items-center gap-1.5">
+          <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded bg-[#17201A] text-white/90 border border-primary/40 flex items-center gap-1.5">
             <Scan className="w-3 h-3 text-[#86EFAC]" />
             Inspection Layer: {activeLayer.toUpperCase()}
           </span>
@@ -186,7 +186,7 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
 
         {activeLayer === "noise" && (
           <div className="flex items-start gap-2">
-            <Info className="w-4 h-4 text-[#2F6B4F] shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold text-foreground font-sans">PRNU Sensor Noise Context: </span>
               Physical camera sensors impart microscopic, uniform noise patterns across every image. Discontinuities in quadrant noise floor RMS values indicate potential localized editing or multi-source composition.

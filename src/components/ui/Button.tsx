@@ -22,34 +22,34 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: cn(
-    "bg-[#14532D] text-white border border-[#14532D] shadow-[0_1px_2px_rgba(20,83,45,0.10)]",
-    "hover:bg-[#0F4526] hover:border-[#0F4526] hover:-translate-y-[1px] hover:shadow-[0_3px_8px_rgba(20,83,45,0.14)]",
-    "active:translate-y-0 active:scale-[0.99] active:shadow-[0_1px_2px_rgba(20,83,45,0.06)]",
-    "focus-visible:ring-[#6FA887]"
+    "bg-[#16A34A] text-white border border-[#16A34A] shadow-[0_1px_2px_rgba(22,163,74,0.14)]",
+    "hover:bg-[#15803D] hover:border-[#15803D] hover:-translate-y-[1px] hover:shadow-[0_3px_8px_rgba(22,163,74,0.20)]",
+    "active:translate-y-0 active:scale-[0.99] active:shadow-[0_1px_2px_rgba(22,163,74,0.08)]",
+    "focus-visible:ring-[#16A34A]"
   ),
   secondary: cn(
-    "bg-white text-[#14532D] border border-[#AFC5B5] shadow-xs",
-    "hover:bg-[#F4F8F4] hover:border-[#14532D] hover:text-[#14532D] hover:-translate-y-[1px] hover:shadow-[0_2px_6px_rgba(20,83,45,0.08)]",
+    "bg-white text-[#15803D] border border-[#A3D9B5] shadow-xs",
+    "hover:bg-[#F4F8F4] hover:border-[#16A34A] hover:text-[#16A34A] hover:-translate-y-[1px] hover:shadow-[0_2px_6px_rgba(22,163,74,0.10)]",
     "active:translate-y-0 active:scale-[0.99] active:bg-[#EAF4ED]",
-    "focus-visible:ring-[#6FA887]"
+    "focus-visible:ring-[#16A34A]"
   ),
   tertiary: cn(
-    "bg-transparent text-[#2F6B4F] border-none shadow-none px-1 py-2",
-    "hover:text-[#14532D] hover:bg-transparent",
+    "bg-transparent text-[#15803D] border-none shadow-none px-1 py-2",
+    "hover:text-[#16A34A] hover:bg-transparent",
     "active:scale-[0.99]",
-    "focus-visible:ring-[#6FA887] group"
+    "focus-visible:ring-[#16A34A] group"
   ),
   outline: cn(
-    "bg-white text-[#17201A] border border-[#AFC5B5] shadow-xs",
-    "hover:bg-[#F4F8F4] hover:border-[#14532D] hover:text-[#14532D] hover:-translate-y-[1px]",
+    "bg-white text-[#17201A] border border-[#A3D9B5] shadow-xs",
+    "hover:bg-[#F4F8F4] hover:border-[#16A34A] hover:text-[#16A34A] hover:-translate-y-[1px]",
     "active:translate-y-0 active:scale-[0.99]",
-    "focus-visible:ring-[#6FA887]"
+    "focus-visible:ring-[#16A34A]"
   ),
   ghost: cn(
-    "bg-transparent text-[#2F6B4F] border border-transparent shadow-none",
-    "hover:text-[#14532D] hover:bg-[#F4F8F4]",
+    "bg-transparent text-[#15803D] border border-transparent shadow-none",
+    "hover:text-[#16A34A] hover:bg-[#F4F8F4]",
     "active:scale-[0.99]",
-    "focus-visible:ring-[#6FA887]"
+    "focus-visible:ring-[#16A34A]"
   ),
   danger: cn(
     "bg-[#B42318] text-white border border-[#B42318] shadow-xs",

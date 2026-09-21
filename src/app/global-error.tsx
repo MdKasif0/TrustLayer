@@ -29,7 +29,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           <button
             type="button"
             onClick={() => reset()}
-            className="inline-flex items-center justify-center h-11 px-[18px] text-sm font-semibold text-white bg-[#14532D] hover:bg-[#0F4526] border border-[#14532D] rounded-[10px] shadow-[0_1px_2px_rgba(20,83,45,0.10)] hover:shadow-[0_3px_8px_rgba(20,83,45,0.14)] hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99] transition-all duration-150 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6FA887] focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center h-11 px-[18px] text-sm font-semibold text-white bg-[#16A34A] hover:bg-[#15803D] border border-[#16A34A] rounded-[10px] shadow-[0_1px_2px_rgba(22,163,74,0.14)] hover:shadow-[0_3px_8px_rgba(22,163,74,0.20)] hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99] transition-all duration-150 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Reload TrustLayer
