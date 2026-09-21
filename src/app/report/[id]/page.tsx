@@ -148,27 +148,17 @@ export default function ReportPermalinkPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="secondary"
               size="sm"
               onClick={handleCopyLink}
-              className="h-8 text-xs font-mono"
+              icon={copiedLink ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5 text-secondary" />}
             >
-              {copiedLink ? (
-                <>
-                  <Check className="w-3.5 h-3.5 mr-1.5 text-success" />
-                  <span>Link Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5 mr-1.5 text-muted" />
-                  <span>Copy Permalink</span>
-                </>
-              )}
+              {copiedLink ? "Link Copied" : "Copy Permalink"}
             </Button>
             <Link href="/verify">
-              <Button variant="primary" size="sm" className="h-8 text-xs">
+              <Button variant="primary" size="sm">
                 Verify Another File
               </Button>
             </Link>
