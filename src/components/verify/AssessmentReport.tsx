@@ -94,34 +94,31 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
           </div>
 
-          {/* Action Buttons: Export PDF, Share, Analyze Another */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Action Buttons: Export Report (Primary), Share Report (Secondary), Analyze Another (Tertiary) */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Button
-              variant="outline"
+              variant="primary"
               size="sm"
               onClick={() => setIsExportModalOpen(true)}
-              className="text-xs font-mono h-9"
-              icon={<FileDown className="w-3.5 h-3.5" />}
+              icon={<FileDown className="w-4 h-4" />}
             >
-              Export PDF
+              Export Report
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => setIsShareModalOpen(true)}
-              className="text-xs font-mono h-9"
-              icon={<Share2 className="w-3.5 h-3.5" />}
+              icon={<Share2 className="w-4 h-4" />}
             >
-              Share
+              Share Report
             </Button>
             <Button
-              variant="outline"
+              variant="tertiary"
               size="sm"
               onClick={onReset}
-              className="text-xs font-mono h-9"
-              icon={<RotateCcw className="w-3.5 h-3.5" />}
+              iconRight={<ArrowRight className="w-3.5 h-3.5" />}
             >
-              Analyze Another
+              Analyze another file
             </Button>
           </div>
         </div>
