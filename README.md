@@ -166,25 +166,52 @@ sequenceDiagram
 TrustLayer dispatches all four forensic engines concurrently. Execution latency remains bounded by the slowest vector rather than compounding sequentially:
 
 ```mermaid
-gantt
-    title Concurrent Multi-Signal Forensic Benchmark (P95 Latency)
-    dateFormat X
-    axisFormat %s ms
+flowchart LR
+    subgraph S_INGEST["1. Pre-Flight Ingestion<br/>0ms - 160ms"]
+        direction TB
+        I1["SHA-256 Checksumming<br/><code>0ms - 110ms</code>"]
+        I2["Stream Sanitization<br/><code>90ms - 160ms</code>"]
+        I1 --> I2
+    end
 
-    section Ingestion
-    Payload Hashing & Pre-Flight Validation :active, ing1, 0, 110
-    MIME & Header Binary Sanitization       :active, ing2, 90, 160
+    subgraph S_PARALLEL["2. Concurrent Forensic Engines (Dispatched at T=160ms)"]
+        direction TB
+        P1["Signal 01: AI Spectral (FFT) & CLIP Latents<br/><code>160ms - 820ms (Δ660ms)</code>"]
+        P2["Signal 02: C2PA JUMBF & X.509 PKI Chain<br/><code>160ms - 480ms (Δ320ms)</code>"]
+        P3["Signal 03: EXIF / DQT Matrix Extraction<br/><code>160ms - 320ms (Δ160ms)</code>"]
+        P4["Signal 04: ELA Recompression & Sensor PRNU<br/><code>160ms - 890ms (Δ730ms)</code>"]
+    end
 
-    section Parallel Signals
-    Signal 01: AI Spectral & Latent Vectors :crit, s1, 160, 820
-    Signal 02: C2PA JUMBF & PKI Validation  :s2, 160, 480
-    Signal 03: EXIF / DQT Matrix Extraction :s3, 160, 320
-    Signal 04: ELA & Sensor PRNU Forensics  :s4, 160, 890
+    subgraph S_SYNTHESIS["3. Evidence Synthesis<br/>890ms - 1090ms"]
+        direction TB
+        Y1["Multi-Vector Corroboration Engine<br/><code>890ms - 1020ms (Δ130ms)</code>"]
+        Y2["Trust Report Assembly & Signing<br/><code>1020ms - 1090ms (Δ70ms)</code>"]
+        Y1 --> Y2
+    end
 
-    section Synthesis
-    Cross-Vector Corroboration Engine       :active, syn1, 890, 1020
-    Report Assembly & Cryptographic Signing :active, syn2, 1020, 1090
+    S_INGEST ==>|Dispatches 4 Workers| S_PARALLEL
+    S_PARALLEL ==>|Bounded by P95 Vector| S_SYNTHESIS
+
+    classDef stage fill:#F4F8F4,stroke:#A3D9B5,stroke-width:1.5px,color:#17201A;
+    classDef nodeStyle fill:#FFFFFF,stroke:#C1E3CA,stroke-width:1px,color:#17201A;
+    class S_INGEST,S_PARALLEL,S_SYNTHESIS stage;
+    class I1,I2,P1,P2,P3,P4,Y1,Y2 nodeStyle;
 ```
+
+#### Latency Benchmark & Execution Profile
+
+| Pipeline Stage | Engine / Diagnostic Vector | Start (T+) | End (T+) | Latency | Execution Model |
+|:---|:---|:---:|:---:|:---:|:---:|
+| **Pre-Flight** | Payload Hashing & Checksum Validation | `0ms` | `110ms` | 110ms | Single-Threaded |
+| **Pre-Flight** | MIME & Stream Header Sanitization | `90ms` | `160ms` | 70ms | Sequential |
+| **Signal 01** | AI Spectral Decomposition (FFT) & CLIP Latents | `160ms` | `820ms` | 660ms | **Concurrent Worker** |
+| **Signal 02** | C2PA JUMBF Manifest & X.509 Chain Verification | `160ms` | `480ms` | 320ms | **Concurrent Worker** |
+| **Signal 03** | EXIF / DQT Firmware Matrix Extraction | `160ms` | `320ms` | 160ms | **Concurrent Worker** |
+| **Signal 04** | Error Level Analysis (ELA) & Sensor PRNU | `160ms` | `890ms` | 730ms | **Concurrent Worker** |
+| **Synthesis** | Multi-Vector Evidence Corroboration Engine | `890ms` | `1020ms` | 130ms | Post-Aggregation |
+| **Delivery** | Trust Report Assembly & Cryptographic Permalink | `1020ms` | `1090ms` | 70ms | Finalization |
+
+> **Performance Advantage**: Because all 4 forensic engines execute asynchronously in parallel, total P95 wall-clock latency is **~1,090ms**, compared to **~2,240ms** under sequential execution (**a 51.3% latency reduction**).
 
 ---
 
@@ -193,38 +220,34 @@ gantt
 TrustLayer uses deterministic rules to evaluate agreement and tension between signals:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Ingestion : Media Dropped
-    Ingestion --> MultiSignalEvaluation : SHA-256 Verified
+flowchart TD
+    A([Media Ingestion]) --> B[Compute Cryptographic Hash & Validate Stream]
+    B --> C{Parallel Signal Evaluation}
 
-    state MultiSignalEvaluation {
-        [*] --> AI_Analysis
-        [*] --> C2PA_Verification
-        [*] --> Metadata_Parsing
-        [*] --> Forensic_ELA
+    C -->|Vector 1| V1[AI Spectral & Latent Classifier]
+    C -->|Vector 2| V2[C2PA JUMBF & X.509 PKI Validator]
+    C -->|Vector 3| V3[Metadata & DQT Matrix Inspector]
+    C -->|Vector 4| V4[Error Level & PRNU Forensics]
 
-        AI_Analysis --> EvaluationComplete : Vector Computed
-        C2PA_Verification --> EvaluationComplete : Manifest Evaluated
-        Metadata_Parsing --> EvaluationComplete : Headers Extracted
-        Forensic_ELA --> EvaluationComplete : Residuals Mapped
-    }
+    V1 & V2 & V3 & V4 --> D{Cross-Vector Synthesis Engine}
 
-    MultiSignalEvaluation --> CrossSignalSynthesis : All Vectors Ready
+    D -->|Valid Hardware C2PA + Clean Noise Floor| O1[🟢 VERIFIED BASELINE<br/>Cryptographic Lineage Intact]
+    D -->|Natural Noise Floor + Consistent DQT Tables| O2[🟢 SUPPORTIVE EVIDENCE<br/>No Generative Markers]
+    D -->|High Spectral Grid + Synthetic Latent Shift| O3[🔴 POTENTIALLY SYNTHETIC<br/>Generative Architecture Patterns]
+    D -->|Discontinuous ELA Residuals + DQT Mismatch| O4[🔴 MANIPULATED / SPLICED<br/>Localized Tampering Detected]
+    D -->|Extreme Compression Noise + Ambiguous Latents| O5[🟡 INCONCLUSIVE<br/>Insufficient High-Frequency SNR]
 
-    state CrossSignalSynthesis {
-        state "Valid Hardware C2PA + Natural Noise Floor" as ProvenanceValid
-        state "High Spectral Lattice + Synthetic Latents" as HighAI
-        state "Quantization Mismatch + Local ELA Spikes" as Tampered
-        state "Heavy Compression + Unaltered Headers" as Degraded
+    O1 & O2 & O3 & O4 & O5 --> E([Final Calibrated Trust Report])
 
-        ProvenanceValid --> Verified : Intact Trust Chain
-        HighAI --> FlaggedSynthetic : Corroborated by Missing C2PA
-        Tampered --> FlaggedManipulated : Discontinuous Compression
-        Degraded --> Inconclusive : Low High-Frequency SNR
-    }
+    classDef normal fill:#F4F8F4,stroke:#A3D9B5,stroke-width:1.5px,color:#17201A;
+    classDef success fill:#EAF4ED,stroke:#16A34A,stroke-width:2px,color:#15803D;
+    classDef danger fill:#FEF2F2,stroke:#DC2626,stroke-width:2px,color:#991B1B;
+    classDef warning fill:#FFFBEB,stroke:#D97706,stroke-width:2px,color:#92400E;
 
-    CrossSignalSynthesis --> TrustReportGenerated : Assessment Finalized
-    TrustReportGenerated --> [*]
+    class A,B,C,V1,V2,V3,V4,D,E normal;
+    class O1,O2 success;
+    class O3,O4 danger;
+    class O5 warning;
 ```
 
 ---
