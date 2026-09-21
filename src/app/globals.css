@@ -4,22 +4,28 @@
   --background: #FAFAF7;
   --foreground: #17201A;
   --surface: #FFFFFF;
-  --primary: #16A34A;
-  --primary-hover: #15803D;
+  --primary: #14532D;
+  --primary-hover: #0F4526;
   --secondary: #2F6B4F;
   --muted: #66736A;
   --soft-green: #EAF4ED;
   --very-soft-green: #F4F8F4;
   --border: #DDE3DE;
   --border-strong: #C4CCC6;
-  --warning: #B7791F;
+  --border-secondary: #AFC5B5;
+  --warning: #8A5A12;
   --warning-bg: #FFF7E6;
+  --warning-border: #E7C98A;
   --danger: #B42318;
+  --danger-hover: #982018;
   --danger-bg: #FEF0EF;
   --success: #28734A;
   --success-bg: #ECF7EF;
+  --focus-ring: #6FA887;
   --shadow-subtle: 0 1px 2px rgba(23, 32, 26, 0.04);
   --shadow-card: 0 1px 3px rgba(23, 32, 26, 0.05), 0 1px 2px rgba(23, 32, 26, 0.03);
+  --btn-primary-shadow: 0 1px 2px rgba(20, 83, 45, 0.10);
+  --btn-primary-hover-shadow: 0 3px 8px rgba(20, 83, 45, 0.14);
 }
 
 @theme inline {
