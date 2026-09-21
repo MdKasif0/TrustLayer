@@ -94,13 +94,12 @@ export function MediaPreview({
         <div className="flex items-center gap-2 shrink-0">
           <Button
             type="button"
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={onReplace}
             disabled={disabled}
             icon={<RefreshCw className="w-3.5 h-3.5" />}
             title="Replace media file"
-            className="text-xs font-mono"
           >
             Replace
           </Button>
@@ -110,7 +109,7 @@ export function MediaPreview({
             size="sm"
             onClick={onRemove}
             disabled={disabled}
-            className="text-danger hover:bg-danger-bg hover:border-[#F0C5C1] text-xs font-mono"
+            className="text-danger hover:bg-danger-bg hover:border-[#B42318]/40"
             icon={<Trash2 className="w-3.5 h-3.5" />}
             title="Remove media file"
           >
