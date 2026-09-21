@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { SoftwareApplicationData } from "@/components/seo/StructuredData";
+import { constructMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = constructMetadata({
+  path: "/",
+});
 import {
   ScanSearch,
   Fingerprint,

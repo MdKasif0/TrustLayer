@@ -25,6 +25,7 @@ import {
   Info,
   ArrowRight,
   AlertTriangle,
+  Share2,
 } from "lucide-react";
 
 export function ComponentShowcase() {
@@ -375,6 +376,71 @@ export function ComponentShowcase() {
                 </div>
               </div>
             </Modal>
+        {/* Social Sharing & Open Graph Cards */}
+        <section className="mb-12">
+          <div className="flex items-center gap-2 mb-4">
+            <Share2 className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold">Social Sharing &amp; Open Graph Previews</h2>
+          </div>
+          <Card padding="md">
+            <div className="space-y-6">
+              <p className="text-xs text-muted leading-relaxed">
+                Precision-engineered 1200 × 630 px Open Graph cards adhering to cybersecurity editorial standards for Twitter/X, LinkedIn, WhatsApp, and Discord previews.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Global Open Graph Card */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="font-bold text-foreground">Global Card (/og/trustlayer-og.png)</span>
+                    <span className="text-muted">1200 × 630 px</span>
+                  </div>
+                  <div className="rounded-xl border border-border overflow-hidden bg-surface shadow-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/og/trustlayer-og.png"
+                      alt="TrustLayer Global Open Graph Social Card"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Research Open Graph Card */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="font-bold text-foreground">Research Card (/og/trustlayer-research.png)</span>
+                    <span className="text-muted">1200 × 630 px</span>
+                  </div>
+                  <div className="rounded-xl border border-border overflow-hidden bg-surface shadow-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/og/trustlayer-research.png"
+                      alt="TrustLayer Research Open Graph Social Card"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* App Icons */}
+              <div className="pt-4 border-t border-border">
+                <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-3">
+                  App Icons &amp; Favicon
+                </p>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/icon.png" alt="Icon 512x512" className="w-12 h-12 rounded-xl border border-border shadow-xs" />
+                    <span className="text-xs font-mono text-muted">icon.png (512×512)</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/apple-icon.png" alt="Apple Touch Icon 180x180" className="w-10 h-10 rounded-lg border border-border shadow-xs" />
+                    <span className="text-xs font-mono text-muted">apple-icon.png (180×180)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Card>
         </section>
       </div>

@@ -33,8 +33,21 @@ export const SITE_CONFIG = {
   publisher: "TrustLayer",
 };
 
+export function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
+  }
+  return "https://trustlayer.dev";
+}
+
 export function getCanonicalUrl(path: string = ""): string {
-  const cleanBase = SITE_CONFIG.url.replace(/\/+$/, "");
+  const cleanBase = getBaseUrl().replace(/\/+$/, "");
   const cleanPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
   return `${cleanBase}${cleanPath}`;
 }
@@ -58,9 +71,10 @@ export function constructMetadata({
 }: MetadataOptions = {}): Metadata {
   const canonical = getCanonicalUrl(path);
   const pageTitle = title ? title : SITE_CONFIG.titleDefault;
+  const fullImageUrl = image.startsWith("http") ? image : getCanonicalUrl(image);
 
   return {
-    metadataBase: new URL(SITE_CONFIG.url),
+    metadataBase: new URL(getBaseUrl()),
     title: title ? title : { default: SITE_CONFIG.titleDefault, template: SITE_CONFIG.titleTemplate },
     description,
     keywords: SITE_CONFIG.keywords,
@@ -91,7 +105,7 @@ export function constructMetadata({
       description,
       images: [
         {
-          url: image.startsWith("http") ? image : image,
+          url: fullImageUrl,
           width: 1200,
           height: 630,
           alt: imageAlt,
@@ -102,7 +116,7 @@ export function constructMetadata({
       card: SITE_CONFIG.twitterCard,
       title: pageTitle,
       description,
-      images: [image],
+      images: [fullImageUrl],
       creator: "@trustlayer",
     },
     icons: {
