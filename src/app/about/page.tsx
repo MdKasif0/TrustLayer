@@ -21,12 +21,14 @@ import {
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { constructMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "How TrustLayer Works — Research, Methodology & Transparency",
+export const metadata: Metadata = constructMetadata({
+  title: "About TrustLayer — Methodology, Research & Transparency",
   description:
-    "TrustLayer combines multiple evidence sources (AI detection, C2PA provenance, metadata, forensics) to provide transparent, probabilistic digital media verification.",
-};
+    "Learn how TrustLayer combines AI detection, provenance, metadata, and forensic signals to provide transparent, evidence-based media verification.",
+  path: "/about",
+});
 
 interface MethodologyCard {
   id: string;
