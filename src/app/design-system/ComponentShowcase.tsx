@@ -376,6 +376,9 @@ export function ComponentShowcase() {
                 </div>
               </div>
             </Modal>
+          </Card>
+        </section>
+
         {/* Social Sharing & Open Graph Cards */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
