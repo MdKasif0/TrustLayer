@@ -94,7 +94,7 @@ export function VisualEvidenceMap({ media, className }: VisualEvidenceMapProps) 
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={media.previewUrl}
-              alt={media.name}
+              alt={media.name ? `Forensic analysis layer on ${media.name}` : "Visual forensic evidence overlay"}
               className="w-full max-h-[440px] object-contain"
             />
 

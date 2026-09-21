@@ -136,7 +136,7 @@ export function MediaPreview({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={media.previewUrl}
-            alt={media.name}
+            alt={media.name ? `Verification candidate: ${media.name}` : "Digital media file under forensic verification"}
             className="w-full max-h-[440px] object-contain"
           />
         )}
