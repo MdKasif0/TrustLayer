@@ -147,10 +147,10 @@ export function VerifyPage() {
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                  Verify Media
+                  Verify digital media with multiple evidence signals.
                 </h1>
                 <p className="text-sm text-muted mt-1 leading-relaxed max-w-2xl">
-                  Analyze a digital image or video across multiple independent evidence signals.
+                  Analyze digital images and videos across AI-generated content detection, media manipulation, provenance, metadata, and forensic analysis.
                 </p>
               </div>
             </div>
