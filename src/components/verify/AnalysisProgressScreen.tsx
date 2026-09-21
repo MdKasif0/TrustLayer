@@ -53,7 +53,7 @@ export function AnalysisProgressScreen({
             size="sm"
             onClick={onCancel}
             icon={<XCircle className="w-3.5 h-3.5" />}
-            className="text-muted hover:text-danger hover:border-[#F0C5C1] text-xs font-mono"
+            className="hover:text-danger hover:border-[#B42318]/40"
           >
             Cancel Verification
           </Button>
