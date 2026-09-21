@@ -27,8 +27,8 @@ interface NavItem {
 const mainNavItems: NavItem[] = [
   { label: "Verify Media", href: "/verify", icon: ScanSearch },
   { label: "Reports", href: "/reports", icon: FileText },
-  { label: "Research", href: "/about#research-foundations", icon: GraduationCap },
-  { label: "How It Works", href: "/about", icon: HelpCircle },
+  { label: "Research", href: "/research", icon: GraduationCap },
+  { label: "How It Works", href: "/how-it-works", icon: HelpCircle },
 ];
 
 const secondaryNavItems: NavItem[] = [
@@ -43,18 +43,26 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-surface border-b border-border">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
-          {/* Left: Brand Logo & Primary Navigation */}
+        <div className="flex items-center justify-between h-16">
+          {/* Left Section: Wordmark Brand Logo & Navigation */}
           <div className="flex items-center gap-8">
-            <Logo />
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 font-bold text-base tracking-tight text-foreground select-none group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-soft-green flex items-center justify-center text-primary border border-[#A3D9B5] transition-colors group-hover:bg-primary group-hover:text-white">
+                <Shield className="w-4 h-4 transition-transform duration-200 group-hover:scale-105" />
+              </div>
+              <span className="font-semibold text-lg tracking-tight">
+                Trust<span className="text-primary font-bold">Layer</span>
+              </span>
+            </Link>
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-1">
               {mainNavItems.map((item) => {
                 const isActive =
-                  item.href === "/about#research-foundations"
-                    ? false
-                    : pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"));
+                  pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"));
 
                 const Icon = item.icon;
 
