@@ -110,7 +110,7 @@ export default function SettingsPage() {
           </div>
 
           <Link href="/verify">
-            <Button variant="primary" size="sm" className="text-xs font-mono">
+            <Button variant="primary" size="sm">
               Open Workspace
             </Button>
           </Link>
@@ -359,30 +359,28 @@ export default function SettingsPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setConfirmClearOpen(true)}
-                      className="w-full text-xs font-mono text-[#991B1B] hover:bg-[#FDF2F2] border-[#F8B4B4]"
+                      className="w-full text-xs text-[#B42318] border-[#E5B5B5] hover:bg-[#FDF2F2]"
                       icon={<Trash2 className="w-3.5 h-3.5" />}
                     >
                       Clear Local History Cache
                     </Button>
                   ) : (
-                    <div className="p-3 bg-[#FDF2F2] border border-[#F8B4B4] rounded-lg space-y-2">
-                      <p className="text-xs text-[#991B1B] font-medium">
+                    <div className="p-3 bg-[#FDF2F2] border border-[#F8B4B4] rounded-[10px] space-y-2.5">
+                      <p className="text-xs text-[#B42318] font-medium">
                         Permanently delete all locally stored verification reports?
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <Button
                           variant="danger"
                           size="sm"
                           onClick={handleClearHistory}
-                          className="text-xs font-mono h-7"
                         >
                           Confirm Clear
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           onClick={() => setConfirmClearOpen(false)}
-                          className="text-xs font-mono h-7"
                         >
                           Cancel
                         </Button>

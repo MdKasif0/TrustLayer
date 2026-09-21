@@ -26,7 +26,7 @@ export function ReportDetailModal({ report, isOpen, onClose }: ReportDetailModal
         <div className="sticky top-0 z-30 px-6 py-3.5 border-b border-border bg-surface flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={onClose}
               icon={<ArrowLeft className="w-3.5 h-3.5" />}

@@ -45,9 +45,9 @@ export function ReportExportModal({ report, isOpen, onClose }: ReportExportModal
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={handlePrint}
               icon={<Printer className="w-3.5 h-3.5" />}

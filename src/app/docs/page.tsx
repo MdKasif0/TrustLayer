@@ -105,7 +105,11 @@ export default function DocsPage() {
           </div>
 
           <Link href="/verify">
-            <Button variant="primary" size="sm" className="text-xs font-mono">
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<ScanSearch className="w-3.5 h-3.5" />}
+            >
               Verify Media
             </Button>
           </Link>
@@ -417,7 +421,11 @@ const hashSha256 = Array.from(new Uint8Array(hashBuffer))
                   Ready to test these methodologies on your files?
                 </span>
                 <Link href="/verify">
-                  <Button variant="primary" size="sm" className="text-xs font-mono">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    icon={<ScanSearch className="w-3.5 h-3.5" />}
+                  >
                     Verify Media Now
                   </Button>
                 </Link>

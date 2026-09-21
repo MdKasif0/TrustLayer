@@ -240,14 +240,14 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
-              <button
-                type="button"
+              <Button
+                variant="tertiary"
                 onClick={() => handleScrollToEvidence("ai")}
-                className="text-xs font-mono font-semibold text-primary hover:text-secondary inline-flex items-center gap-1 cursor-pointer transition-colors"
+                iconRight={<ArrowRight className="w-3.5 h-3.5" />}
+                className="text-xs"
               >
-                <span>View evidence</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+                View Evidence
+              </Button>
             </div>
           </div>
 
@@ -284,14 +284,14 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
-              <button
-                type="button"
+              <Button
+                variant="tertiary"
                 onClick={() => handleScrollToEvidence("provenance")}
-                className="text-xs font-mono font-semibold text-primary hover:text-secondary inline-flex items-center gap-1 cursor-pointer transition-colors"
+                iconRight={<ArrowRight className="w-3.5 h-3.5" />}
+                className="text-xs"
               >
-                <span>View evidence</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+                View Evidence
+              </Button>
             </div>
           </div>
 
@@ -328,14 +328,14 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
-              <button
-                type="button"
+              <Button
+                variant="tertiary"
                 onClick={() => handleScrollToEvidence("metadata")}
-                className="text-xs font-mono font-semibold text-primary hover:text-secondary inline-flex items-center gap-1 cursor-pointer transition-colors"
+                iconRight={<ArrowRight className="w-3.5 h-3.5" />}
+                className="text-xs"
               >
-                <span>View evidence</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+                View Evidence
+              </Button>
             </div>
           </div>
 
@@ -372,14 +372,14 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
-              <button
-                type="button"
+              <Button
+                variant="tertiary"
                 onClick={() => handleScrollToEvidence("forensics")}
-                className="text-xs font-mono font-semibold text-primary hover:text-secondary inline-flex items-center gap-1 cursor-pointer transition-colors"
+                iconRight={<ArrowRight className="w-3.5 h-3.5" />}
+                className="text-xs"
               >
-                <span>View evidence</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+                View Evidence
+              </Button>
             </div>
           </div>
         </div>
@@ -556,17 +556,17 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
 
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <Button
-            variant="outline"
+            variant="secondary"
+            size="md"
             onClick={() => setIsExportModalOpen(true)}
-            className="text-xs font-mono h-10 px-4"
             icon={<FileText className="w-4 h-4" />}
           >
             Export Report
           </Button>
           <Button
             variant="primary"
+            size="md"
             onClick={onReset}
-            className="text-xs font-mono h-10 px-5 bg-primary hover:bg-secondary text-white font-semibold"
             icon={<RotateCcw className="w-4 h-4" />}
           >
             Analyze Another File

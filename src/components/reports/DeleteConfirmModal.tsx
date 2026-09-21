@@ -58,8 +58,8 @@ export function DeleteConfirmModal({
           This forensic assessment and associated signal evidence will be permanently removed.
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-2">
-          <Button variant="outline" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>
             Cancel
           </Button>
           <Button

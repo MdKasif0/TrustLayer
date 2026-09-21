@@ -66,7 +66,7 @@ export function ReportShareModal({ report, isOpen, onClose }: ReportShareModalPr
               className="flex-1 text-xs font-mono bg-[#FAFAF8] border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none"
             />
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={handleCopy}
               icon={copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}

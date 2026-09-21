@@ -48,22 +48,27 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button
             variant="primary"
+            size="md"
             onClick={() => reset()}
-            className="w-full sm:w-auto text-xs"
+            icon={<RefreshCw className="w-4 h-4" />}
+            className="w-full sm:w-auto"
           >
-            <RefreshCw className="w-3.5 h-3.5 mr-2" />
             Retry Action
           </Button>
 
           <Link href="/verify" className="w-full sm:w-auto">
-            <Button variant="secondary" className="w-full sm:w-auto text-xs">
+            <Button variant="secondary" size="md" className="w-full sm:w-auto">
               Return to Workspace
             </Button>
           </Link>
 
           <Link href="/" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto text-xs">
-              <Home className="w-3.5 h-3.5 mr-2" />
+            <Button
+              variant="outline"
+              size="md"
+              icon={<Home className="w-4 h-4" />}
+              className="w-full sm:w-auto"
+            >
               Home
             </Button>
           </Link>

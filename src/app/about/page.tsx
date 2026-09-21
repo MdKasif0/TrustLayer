@@ -281,9 +281,12 @@ export default function AboutPage() {
                 <p>REVISED: SEPTEMBER 2026</p>
               </div>
               <Link href="/verify">
-                <Button variant="primary" size="sm" className="text-xs">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconRight={<ArrowRight className="w-3.5 h-3.5" />}
+                >
                   Open Workspace
-                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                 </Button>
               </Link>
             </div>
@@ -528,12 +531,12 @@ export default function AboutPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Link href="/docs">
-                    <Button variant="outline" size="sm" className="text-xs">
+                    <Button variant="secondary" size="sm">
                       Technical Docs
                     </Button>
                   </Link>
                   <Link href="/verify">
-                    <Button variant="primary" size="sm" className="text-xs">
+                    <Button variant="primary" size="sm">
                       Verify Media
                     </Button>
                   </Link>

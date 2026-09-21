@@ -18,10 +18,11 @@ export default function NotFound() {
           </p>
           <Link href="/">
             <Button
-              variant="outline"
+              variant="secondary"
+              size="md"
               icon={<ArrowLeft className="w-4 h-4" />}
             >
-              Back to home
+              Back to Home
             </Button>
           </Link>
         </div>

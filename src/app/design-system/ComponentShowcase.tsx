@@ -23,6 +23,8 @@ import {
   BrainCircuit,
   Upload,
   Info,
+  ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
 
 export function ComponentShowcase() {
@@ -75,33 +77,66 @@ export function ComponentShowcase() {
 
         {/* Buttons */}
         <section className="mb-12">
-          <h2 className="text-lg font-semibold mb-4">Buttons</h2>
+          <h2 className="text-lg font-semibold mb-4">Button Design System</h2>
           <Card padding="md">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <Button>Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="outline">Outline</Button>
-                <Button variant="ghost">Ghost</Button>
-                <Button variant="danger">Danger</Button>
+            <div className="space-y-6">
+              <div>
+                <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-2">
+                  Semantic Variants (Tactile Cybersecurity System)
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button variant="primary">Primary Action</Button>
+                  <Button variant="secondary">Secondary Action</Button>
+                  <Button variant="tertiary" iconRight={<ArrowRight className="w-3.5 h-3.5" />}>
+                    Tertiary Action
+                  </Button>
+                  <Button variant="danger" icon={<Trash2 className="w-4 h-4" />}>
+                    Danger
+                  </Button>
+                  <Button variant="warning" icon={<AlertTriangle className="w-4 h-4" />}>
+                    Warning
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button size="sm">Small</Button>
-                <Button size="md">Medium</Button>
-                <Button size="lg">Large</Button>
+
+              <div>
+                <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-2">
+                  Size Hierarchy (48px / 44px / 36px / 40px icon)
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button size="lg" icon={<ScanSearch className="w-4 h-4" />}>
+                    Large (48px)
+                  </Button>
+                  <Button size="md" variant="secondary" icon={<ScanSearch className="w-4 h-4" />}>
+                    Medium (44px)
+                  </Button>
+                  <Button size="sm" variant="outline" icon={<ScanSearch className="w-3.5 h-3.5" />}>
+                    Small (36px)
+                  </Button>
+                  <Button size="icon" variant="secondary" aria-label="Search icon">
+                    <ScanSearch className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button icon={<ScanSearch className="w-4 h-4" />}>
-                  With Icon
-                </Button>
-                <Button icon={<Download className="w-4 h-4" />} variant="outline">
-                  Download
-                </Button>
-                <Button icon={<Trash2 className="w-4 h-4" />} variant="danger">
-                  Delete
-                </Button>
-                <Button loading>Loading</Button>
-                <Button disabled>Disabled</Button>
+
+              <div>
+                <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-2">
+                  Interactive &amp; System States
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button icon={<Download className="w-4 h-4" />} variant="primary">
+                    Export Report
+                  </Button>
+                  <Button loading variant="primary">
+                    Analyzing
+                  </Button>
+                  <Button disabled variant="primary">
+                    Disabled Primary
+                  </Button>
+                  <Button disabled variant="secondary">
+                    Disabled Secondary
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>

@@ -34,13 +34,13 @@ const variantStyles: Record<ButtonVariant, string> = {
     "focus-visible:ring-[#6FA887]"
   ),
   tertiary: cn(
-    "bg-transparent text-[#2F6B4F] border border-transparent shadow-none px-2 py-1.5",
+    "bg-transparent text-[#2F6B4F] border-none shadow-none px-1 py-2",
     "hover:text-[#14532D] hover:bg-transparent",
     "active:scale-[0.99]",
     "focus-visible:ring-[#6FA887] group"
   ),
   outline: cn(
-    "bg-white text-[#17201A] border border-[#DDE3DE] shadow-xs",
+    "bg-white text-[#17201A] border border-[#AFC5B5] shadow-xs",
     "hover:bg-[#F4F8F4] hover:border-[#14532D] hover:text-[#14532D] hover:-translate-y-[1px]",
     "active:translate-y-0 active:scale-[0.99]",
     "focus-visible:ring-[#6FA887]"
@@ -85,6 +85,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isTertiary = variant === "tertiary";
+  const iconSizeClass = size === "lg" ? "[&>svg]:w-[18px] [&>svg]:h-[18px]" : "[&>svg]:w-4 [&>svg]:h-4";
 
   return (
     <button
@@ -125,7 +126,7 @@ export function Button({
           />
         </svg>
       ) : icon ? (
-        <span className="shrink-0 flex items-center justify-center [&>svg]:w-4 [&>svg]:h-4 lg:[&>svg]:w-[18px] lg:[&>svg]:h-[18px]">
+        <span className={cn("shrink-0 flex items-center justify-center", iconSizeClass)}>
           {icon}
         </span>
       ) : null}
