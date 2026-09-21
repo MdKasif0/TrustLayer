@@ -65,8 +65,8 @@ export default function HomePage() {
                   <Button
                     variant="primary"
                     size="lg"
-                    icon={<ScanSearch className="w-4 h-4" />}
-                    className="font-semibold px-6 text-sm h-11 rounded-lg"
+                    icon={<ScanSearch className="w-[18px] h-[18px]" />}
+                    className="w-[160px]"
                   >
                     Verify Media
                   </Button>
@@ -75,7 +75,7 @@ export default function HomePage() {
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="font-medium px-5 text-sm h-11 rounded-lg"
+                    className="w-[185px]"
                   >
                     Explore Methodology
                   </Button>
