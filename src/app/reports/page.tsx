@@ -401,28 +401,25 @@ export default function ReportsPage() {
                             </Link>
                             <Button
                               variant="ghost"
-                              size="sm"
                               onClick={() => setSelectedReportForView(report)}
                               title="Quick view"
-                              className="p-1.5 h-auto text-muted hover:text-primary"
+                              className="w-8 h-8 p-0 text-secondary hover:text-primary rounded-md"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </Button>
                             <Button
                               variant="ghost"
-                              size="sm"
                               onClick={() => setSelectedReportForExport(report)}
                               title="Export report"
-                              className="p-1.5 h-auto text-muted hover:text-foreground"
+                              className="w-8 h-8 p-0 text-secondary hover:text-primary rounded-md"
                             >
                               <Download className="w-3.5 h-3.5" />
                             </Button>
                             <Button
                               variant="ghost"
-                              size="sm"
                               onClick={() => setSelectedReportForDelete(report)}
                               title="Delete report"
-                              className="p-1.5 h-auto text-muted hover:text-danger"
+                              className="w-8 h-8 p-0 text-secondary hover:text-danger rounded-md"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </Button>
@@ -456,7 +453,7 @@ export default function ReportsPage() {
                 </Button>
               </Link>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="md"
                 onClick={handleSeedDemo}
                 icon={<Sparkles className="w-3.5 h-3.5" />}
