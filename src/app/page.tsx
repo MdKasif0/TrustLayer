@@ -73,7 +73,7 @@ export default function HomePage() {
                     Verify Media
                   </Button>
                 </Link>
-                <Link href="/about">
+                <Link href="/how-it-works">
                   <Button
                     variant="secondary"
                     size="lg"
@@ -589,10 +589,10 @@ export default function HomePage() {
               </h2>
             </div>
             <Link
-              href="/about"
+              href="/research"
               className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-primary hover:text-primary-hover transition-colors"
             >
-              <span>Explore methodology</span>
+              <span>Explore Research &amp; Foundations</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -669,7 +669,7 @@ export default function HomePage() {
                   Verify Media
                 </Button>
               </Link>
-              <Link href="/about">
+              <Link href="/how-it-works">
                 <Button
                   variant="secondary"
                   size="md"
