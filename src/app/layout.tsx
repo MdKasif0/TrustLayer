@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AppShell } from "@/components/layout";
+import { constructMetadata } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -9,66 +11,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://trustlayer.verification.internal"
-  ),
-  title: {
-    default: "TrustLayer | Digital Media Verification",
-    template: "%s | TrustLayer",
-  },
-  description:
-    "TrustLayer combines AI detection, provenance, metadata and forensic signals to provide evidence-based digital media assessments.",
-  keywords: [
-    "digital media verification",
-    "AI detection",
-    "synthetic content",
-    "C2PA provenance",
-    "media forensics",
-    "deepfake detection",
-    "cyber safety",
-    "content authenticity",
-  ],
-  authors: [{ name: "TrustLayer Engineering" }],
-  creator: "TrustLayer",
-  publisher: "TrustLayer",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "/",
-    siteName: "TrustLayer",
-    title: "TrustLayer | Digital Media Verification",
-    description:
-      "TrustLayer combines AI detection, provenance, metadata and forensic signals to provide evidence-based digital media assessments.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TrustLayer | Digital Media Verification",
-    description:
-      "TrustLayer combines AI detection, provenance, metadata and forensic signals to provide evidence-based digital media assessments.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-};
+export const metadata: Metadata = constructMetadata();
 
 export default function RootLayout({
   children,
@@ -78,6 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="antialiased font-sans bg-background text-foreground min-h-screen">
+        {/* Centralized JSON-LD Structured Data */}
+        <StructuredData />
+
         {/* Accessible Skip Link */}
         <a
           href="#main-content"
