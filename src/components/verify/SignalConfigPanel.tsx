@@ -193,7 +193,7 @@ export function SignalConfigPanel({
       </div>
 
       {/* Action Footer: Primary CTA & Evidence Statement */}
-      <div className="pt-4 border-t border-border space-y-3">
+      <div className="pt-4 border-t border-border space-y-3 flex flex-col items-center">
         <Button
           type="button"
           variant="primary"
@@ -201,7 +201,7 @@ export function SignalConfigPanel({
           onClick={onStartVerification}
           disabled={disabled || selectedCount === 0}
           icon={<ScanSearch className="w-4 h-4" />}
-          className="w-full py-3 text-sm font-semibold shadow-subtle"
+          className="w-full sm:w-[200px]"
         >
           Start Verification
         </Button>
