@@ -6,7 +6,7 @@ export const SITE_CONFIG = {
   titleTemplate: "%s | TrustLayer",
   descriptionDefault:
     "TrustLayer analyzes digital images and videos using AI detection, provenance, metadata, and forensic signals to provide transparent, evidence-based media verification.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://trustlayer.dev",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://trustlayer-v1.netlify.app",
   ogImage: "/og/trustlayer-og.png",
   twitterCard: "summary_large_image" as const,
   keywords: [
@@ -34,16 +34,24 @@ export const SITE_CONFIG = {
 };
 
 export function getBaseUrl(): string {
+  // Explicit override (set in .env.local or hosting env vars)
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL;
   }
+  // Vercel auto-set variable
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
+  // Netlify auto-set variable (available at build time)
+  if (process.env.URL) {
+    return process.env.URL;
+  }
+  // Local development
   if (process.env.NODE_ENV === "development") {
     return "http://localhost:3000";
   }
-  return "https://trustlayer.dev";
+  // Production fallback — must match actual deployed domain
+  return "https://trustlayer-v1.netlify.app";
 }
 
 export function getCanonicalUrl(path: string = ""): string {
