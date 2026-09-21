@@ -81,7 +81,7 @@ const topics: DocTopic[] = [
   },
 ];
 
-export default function DocsPage() {
+export function DocsClient() {
   const [activeTopic, setActiveTopic] = useState<DocTopicId>("getting-started");
 
   return (
@@ -97,7 +97,7 @@ export default function DocsPage() {
               <span className="text-[11px] font-mono text-muted">SPEC VERSION 2026.04</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              TrustLayer Technical Reference
+              TrustLayer documentation
             </h1>
             <p className="text-sm text-muted mt-1 leading-relaxed max-w-2xl">
               In-depth technical guides, algorithm specifications, and evidentiary frameworks governing the TrustLayer verification platform.
