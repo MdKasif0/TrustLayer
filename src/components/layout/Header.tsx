@@ -46,17 +46,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Left Section: Wordmark Brand Logo & Navigation */}
           <div className="flex items-center gap-8">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 font-bold text-base tracking-tight text-foreground select-none group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-soft-green flex items-center justify-center text-primary border border-[#A3D9B5] transition-colors group-hover:bg-primary group-hover:text-white">
-                <Shield className="w-4 h-4 transition-transform duration-200 group-hover:scale-105" />
-              </div>
-              <span className="font-semibold text-lg tracking-tight">
-                Trust<span className="text-primary font-bold">Layer</span>
-              </span>
-            </Link>
+            <Logo />
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-1">
