@@ -13,6 +13,7 @@ import { ReportSection, ReportDivider } from "@/components/ui/ReportSection";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Modal } from "@/components/ui/Modal";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { Logo, LogoMark } from "@/components/Logo";
 import {
   ScanSearch,
   Download,
@@ -425,21 +426,93 @@ export function ComponentShowcase() {
                 </div>
               </div>
 
+              {/* Brand Logo Mark */}
+              <div className="pt-4 border-t border-border">
+                <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-3">
+                  Brand Logo Mark &amp; Identity
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {/* Light background preview */}
+                  <div className="p-4 rounded-xl border border-border bg-surface flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-mono text-muted uppercase tracking-wider block mb-1">
+                        Wordmark on Light
+                      </span>
+                      <Logo size={32} />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <LogoMark size={20} />
+                      <LogoMark size={28} />
+                      <LogoMark size={40} />
+                      <LogoMark size={56} />
+                    </div>
+                  </div>
+
+                  {/* Dark background preview */}
+                  <div className="p-4 rounded-xl border border-border bg-[#141e19] text-white flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-mono text-[#A3D9B5] uppercase tracking-wider block mb-1">
+                        Mark on Dark Background
+                      </span>
+                      <div className="inline-flex items-center gap-2">
+                        <LogoMark size={32} />
+                        <span className="text-[17px] font-semibold tracking-tight text-white">
+                          Trust<span className="text-[#34D399] font-bold">Layer</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <LogoMark size={20} />
+                      <LogoMark size={28} />
+                      <LogoMark size={40} />
+                      <LogoMark size={56} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+                  <a
+                    href="/brand/trustlayer-logo.png"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-primary hover:underline"
+                  >
+                    <span>Download High-Res PNG (1024×1024)</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                  <span className="text-border">•</span>
+                  <a
+                    href="/brand/trustlayer-logo.svg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-primary hover:underline"
+                  >
+                    <span>Vector SVG Asset</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+
               {/* App Icons */}
               <div className="pt-4 border-t border-border">
                 <p className="text-xs font-mono font-bold text-muted uppercase tracking-wider mb-3">
                   App Icons &amp; Favicon
                 </p>
-                <div className="flex items-center gap-6">
+                <div className="flex flex-wrap items-center gap-6">
                   <div className="flex items-center gap-2.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/icon.png" alt="Icon 512x512" className="w-12 h-12 rounded-xl border border-border shadow-xs" />
+                    <img src="/icon.png" alt="Icon 512x512" className="w-12 h-12 rounded-xl border border-border shadow-xs bg-white p-1" />
                     <span className="text-xs font-mono text-muted">icon.png (512×512)</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/apple-icon.png" alt="Apple Touch Icon 180x180" className="w-10 h-10 rounded-lg border border-border shadow-xs" />
+                    <img src="/apple-icon.png" alt="Apple Touch Icon 180x180" className="w-10 h-10 rounded-lg border border-border shadow-xs bg-white p-1" />
                     <span className="text-xs font-mono text-muted">apple-icon.png (180×180)</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/favicon.ico" alt="Favicon" className="w-6 h-6 border border-border rounded" />
+                    <span className="text-xs font-mono text-muted">favicon.ico</span>
                   </div>
                 </div>
               </div>

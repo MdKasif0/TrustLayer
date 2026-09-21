@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none" width="100%" height="100%">
+  <defs>
+    <!-- Shield Left Face Gradient -->
+    <linearGradient id="shieldLeftGrad" x1="120" y1="100" x2="512" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10DF71"/>
+      <stop offset="60%" stop-color="#0DB85B"/>
+      <stop offset="100%" stop-color="#089849"/>
+    </linearGradient>
+
+    <!-- Shield Right Face Gradient -->
+    <linearGradient id="shieldRightGrad" x1="900" y1="100" x2="512" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B857"/>
+      <stop offset="50%" stop-color="#059B49"/>
+      <stop offset="100%" stop-color="#047034"/>
+    </linearGradient>
+
+    <!-- Shield Bottom Bevel Left -->
+    <linearGradient id="bevelLeftGrad" x1="350" y1="850" x2="512" y2="950" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#07A650"/>
+      <stop offset="100%" stop-color="#057F3D"/>
+    </linearGradient>
+
+    <!-- Shield Bottom Bevel Right -->
+    <linearGradient id="bevelRightGrad" x1="670" y1="850" x2="512" y2="950" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#057F3D"/>
+      <stop offset="100%" stop-color="#035829"/>
+    </linearGradient>
+
+    <!-- Top Plate Gradient -->
+    <linearGradient id="plateTopGrad" x1="512" y1="270" x2="512" y2="495" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#27E87B"/>
+      <stop offset="50%" stop-color="#11CE67"/>
+      <stop offset="100%" stop-color="#05B254"/>
+    </linearGradient>
+
+    <!-- Top Plate Edge / Depth -->
+    <linearGradient id="plateTopEdgeGrad" x1="280" y1="390" x2="740" y2="505" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0EB558"/>
+      <stop offset="50%" stop-color="#088A42"/>
+      <stop offset="100%" stop-color="#057134"/>
+    </linearGradient>
+
+    <!-- Mid Plate Gradient -->
+    <linearGradient id="plateMidGrad" x1="512" y1="450" x2="512" y2="610" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0EB85A"/>
+      <stop offset="50%" stop-color="#099B4B"/>
+      <stop offset="100%" stop-color="#057C3A"/>
+    </linearGradient>
+
+    <!-- Mid Plate Edge / Depth -->
+    <linearGradient id="plateMidEdgeGrad" x1="280" y1="500" x2="740" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#088C43"/>
+      <stop offset="50%" stop-color="#056D33"/>
+      <stop offset="100%" stop-color="#035224"/>
+    </linearGradient>
+
+    <!-- Bot Plate Gradient -->
+    <linearGradient id="plateBotGrad" x1="512" y1="560" x2="512" y2="725" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#08984A"/>
+      <stop offset="50%" stop-color="#067F3D"/>
+      <stop offset="100%" stop-color="#04652F"/>
+    </linearGradient>
+
+    <!-- Bot Plate Edge / Depth -->
+    <linearGradient id="plateBotEdgeGrad" x1="280" y1="610" x2="740" y2="735" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#056B32"/>
+      <stop offset="50%" stop-color="#035224"/>
+      <stop offset="100%" stop-color="#023D1A"/>
+    </linearGradient>
+
+    <filter id="plateShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#023416" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Group Shield Outline -->
+  <g id="shield">
+    <!-- Left Half of Shield Frame -->
+    <path d="M 512 70 L 132 248 C 124 252 121 260 121 270 L 121 523 C 121 665 240 795 512 952 L 512 856 C 290 725 201 620 201 500 L 201 318 C 201 310 205 304 212 300 L 512 163 Z" fill="url(#shieldLeftGrad)"/>
+
+    <!-- Right Half of Shield Frame -->
+    <path d="M 512 70 L 892 248 C 900 252 903 260 903 270 L 903 523 C 903 665 784 795 512 952 L 512 856 C 734 725 823 620 823 500 L 823 318 C 823 310 819 304 812 300 L 512 163 Z" fill="url(#shieldRightGrad)"/>
+
+    <!-- Bottom Center Bevel Left -->
+    <path d="M 512 856 L 512 952 L 400 885 C 445 918 480 938 512 952 Z" fill="url(#bevelLeftGrad)"/>
+
+    <!-- Bottom Center Bevel Right -->
+    <path d="M 512 856 L 512 952 C 544 938 579 918 624 885 Z" fill="url(#bevelRightGrad)"/>
+  </g>
+
+  <!-- 3 Isometric Plates -->
+  <!-- Plate 3 (Bottom) -->
+  <g id="plate-bottom" filter="url(#plateShadow)">
+    <!-- Thickness edge -->
+    <path d="M 276 600 C 273 607 277 615 284 620 L 504 734 C 509 737 515 737 520 734 L 740 620 C 747 615 751 607 748 600 L 748 584 L 740 589 L 520 703 C 515 706 509 706 504 703 L 284 589 L 276 584 Z" fill="url(#plateBotEdgeGrad)"/>
+    <!-- Top face -->
+    <path d="M 504 564 C 509 561 515 561 520 564 L 738 676 C 746 680 746 690 740 694 L 520 808 C 515 811 509 811 504 808 L 284 694 C 278 690 278 680 286 676 Z" fill="url(#plateBotGrad)" transform="translate(0, -110)"/>
+  </g>
+
+  <!-- Plate 2 (Middle) -->
+  <g id="plate-middle" filter="url(#plateShadow)">
+    <!-- Thickness edge -->
+    <path d="M 276 490 C 273 497 277 505 284 510 L 504 624 C 509 627 515 627 520 624 L 740 510 C 747 505 751 497 748 490 L 748 474 L 740 479 L 520 593 C 515 596 509 596 504 593 L 284 479 L 276 474 Z" fill="url(#plateMidEdgeGrad)"/>
+    <!-- Top face -->
+    <path d="M 504 454 C 509 451 515 451 520 454 L 738 566 C 746 570 746 580 740 584 L 520 698 C 515 701 509 701 504 698 L 284 584 C 278 580 278 570 286 566 Z" fill="url(#plateMidGrad)" transform="translate(0, -110)"/>
+  </g>
+
+  <!-- Plate 1 (Top) -->
+  <g id="plate-top" filter="url(#plateShadow)">
+    <!-- Thickness edge -->
+    <path d="M 276 380 C 273 387 277 395 284 400 L 504 514 C 509 517 515 517 520 514 L 740 400 C 747 395 751 387 748 380 L 748 364 L 740 369 L 520 483 C 515 486 509 486 504 483 L 284 369 L 276 364 Z" fill="url(#plateTopEdgeGrad)"/>
+    <!-- Top face -->
+    <path d="M 504 274 C 509 271 515 271 520 274 L 738 386 C 746 390 746 400 740 404 L 520 518 C 515 521 509 521 504 518 L 284 404 C 278 400 278 390 286 386 Z" fill="url(#plateTopGrad)"/>
+  </g>
+</svg>
