@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { VerifyPage } from "./VerifyPage";
+import { constructMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Verify Media — TrustLayer",
+export const metadata: Metadata = constructMetadata({
+  title: "Verify Media",
   description:
-    "Upload an image or video to verify its authenticity using multi-signal analysis.",
-};
+    "Analyze suspicious images and videos with TrustLayer's multi-signal digital media verification workflow.",
+  path: "/verify",
+});
 
 export default function Page() {
   return <VerifyPage />;
