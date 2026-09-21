@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { SoftwareApplicationData } from "@/components/seo/StructuredData";
 import {
   ScanSearch,
   Fingerprint,
@@ -26,6 +27,7 @@ import {
 export default function HomePage() {
   return (
     <div className="bg-background text-foreground font-sans">
+      <SoftwareApplicationData />
       {/* ══════════════════════════════════════════════════════════
           HERO: TWO-COLUMN PRODUCT STORY
           Left: ~48% | Right: ~52%
