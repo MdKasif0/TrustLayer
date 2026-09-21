@@ -43,7 +43,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about#research-foundations"
+                  href="/research"
                   className="text-secondary hover:text-primary transition-colors inline-block"
                 >
                   Research
@@ -51,7 +51,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/how-it-works"
                   className="text-secondary hover:text-primary transition-colors inline-block"
                 >
                   How It Works
@@ -76,7 +76,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/how-it-works"
                   className="text-secondary hover:text-primary transition-colors inline-block"
                 >
                   Methodology
