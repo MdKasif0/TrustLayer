@@ -195,7 +195,7 @@ export default function ReportsPage() {
 
           <div className="flex items-center gap-2.5">
             <Link href="/verify">
-              <Button size="sm" icon={<ScanSearch className="w-3.5 h-3.5" />}>
+              <Button variant="primary" size="sm" icon={<ScanSearch className="w-3.5 h-3.5" />}>
                 New Verification
               </Button>
             </Link>
