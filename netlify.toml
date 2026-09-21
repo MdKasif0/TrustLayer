@@ -5,6 +5,7 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_PUBLIC_DEMO_MODE = "true"
+  NEXT_PUBLIC_SITE_URL = "https://trustlayer-v1.netlify.app"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -17,3 +18,10 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# OG Images — ensure crawlers can access and cache them
+[[headers]]
+  for = "/og/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, s-maxage=604800"
+    X-Frame-Options = "SAMEORIGIN"
