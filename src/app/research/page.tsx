@@ -211,11 +211,33 @@ export default function ResearchPage() {
                 </p>
 
                 <div className="pt-3 border-t border-border flex items-start gap-2 text-xs font-mono bg-[#FAFAF8] p-3 rounded-lg">
-                  <span className="text-primary font-bold shrink-0">TrustLayer Implementation:</span>
+                  <span className="text-primary font-bold shrink-0">Research Foundation:</span>
                   <span className="text-muted">{paper.methodologyRelation}</span>
                 </div>
               </article>
             ))}
+          </div>
+
+          {/* Explicit Research Foundation vs Implemented Technology Callout */}
+          <div className="mt-8 p-6 rounded-xl border border-border bg-[#FAFBF9] space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+                Important Scientific Distinction: Research vs. Implementation
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-secondary leading-relaxed font-sans">
+              The peer-reviewed literature above provides the <strong>academic research foundation</strong> informing TrustLayer’s philosophy: that solitary AI detectors are vulnerable to distribution shifts and that multi-signal corroboration is essential.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-xs font-mono">
+              <div className="p-3 bg-surface rounded-lg border border-border">
+                <span className="font-bold text-foreground block mb-1">Academic Research Foundation</span>
+                <span className="text-muted">Informs our multi-signal evidentiary aggregation rules, probabilistic confidence calibration, and adversarial test benchmarks (NIST, FaceForensics++, DeepfakeBench).</span>
+              </div>
+              <div className="p-3 bg-surface rounded-lg border border-border">
+                <span className="font-bold text-primary block mb-1">Currently Implemented Technology</span>
+                <span className="text-foreground">Groq multimodal visual inspection (<code className="text-[11px]">qwen/qwen3.8-27b</code>), binary C2PA JUMBF container scanning, native EXIF/XMP/IPTC parsing, JPEG DQT quantization table analysis, and deterministic evidence aggregation.</span>
+              </div>
+            </div>
           </div>
         </section>
 
