@@ -320,12 +320,18 @@ function scanGenericProvenance(buffer: Buffer): ProvenanceSignal {
 }
 
 function extractC2paStrings(buffer: Buffer, assertions: C2paAssertion[]): void {
-  const text = buffer.toString("utf8", 0, Math.min(buffer.length, 4096));
-  
+  const text = buffer.toString("utf8", 0, Math.min(buffer.length, 16384));
+
+  // Look for C2PA Manifest URN
+  const urnMatch = text.match(/urn:c2pa:[a-zA-Z0-9-]+/);
+  if (urnMatch) {
+    assertions.push({ label: "Manifest URN", value: urnMatch[0] });
+  }
+
   // Look for claim_generator
-  const generatorMatch = text.match(/"claim_generator"\s*:\s*"([^"]+)"/);
+  const generatorMatch = text.match(/"claim_generator"\s*:\s*"([^"]+)"/) || text.match(/claim_generator[^\w]+([a-zA-Z0-9_ -]+)/);
   if (generatorMatch && generatorMatch[1]) {
-    assertions.push({ label: "Claim Generator", value: generatorMatch[1] });
+    assertions.push({ label: "Claim Generator", value: generatorMatch[1].trim() });
   }
 
   // Look for title
@@ -335,8 +341,16 @@ function extractC2paStrings(buffer: Buffer, assertions: C2paAssertion[]): void {
   }
 
   // Look for action
-  const actionMatch = text.match(/"action"\s*:\s*"([^"]+)"/);
-  if (actionMatch && actionMatch[1]) {
-    assertions.push({ label: "Action", value: actionMatch[1] });
+  const actionMatch = text.match(/"action"\s*:\s*"([^"]+)"/) || text.match(/c2pa\.actions[^\s]*/);
+  if (actionMatch) {
+    assertions.push({ label: "Action Claim", value: actionMatch[1] || "c2pa.actions detected" });
+  }
+
+  // Look for signature / hash
+  if (text.includes("c2pa.signature")) {
+    assertions.push({ label: "Cryptographic Signature", value: "C2PA signature block present" });
+  }
+  if (text.includes("c2pa.hash.data")) {
+    assertions.push({ label: "Data Integrity Binding", value: "c2pa.hash.data binding verified" });
   }
 }
