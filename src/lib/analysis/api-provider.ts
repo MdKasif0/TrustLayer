@@ -41,15 +41,29 @@ export class ApiAnalysisProvider implements AnalysisProvider {
     const startTime = Date.now();
 
     // Stage 1: File Validation
+    const initialStageStates: Record<string, any> = {
+      "file-inspection": {
+        status: "in-progress",
+        qualitativeState: "evaluating",
+        detail: "Validating container format and binary integrity.",
+      },
+      "ai-detection": { status: "pending", qualitativeState: "pending", detail: "Waiting for visual analysis." },
+      provenance: { status: "pending", qualitativeState: "pending", detail: "Waiting for C2PA container inspection." },
+      metadata: { status: "pending", qualitativeState: "pending", detail: "Waiting for EXIF/XMP extraction." },
+      forensics: { status: "pending", qualitativeState: "pending", detail: "Waiting for DQT table inspection." },
+      aggregation: { status: "pending", qualitativeState: "pending", detail: "Waiting for evidence synthesis." },
+    };
+
     options?.onProgress?.({
       stageIndex: 0,
       stageNumber: "01",
-      stageName: "FILE VALIDATION",
+      stageName: "FILE INSPECTION",
       stageStatus: "in-progress",
       qualitativeState: "evaluating",
       telemetry: `Validating container format and size for ${media.name}...`,
       percentage: 15,
       completedStages: [],
+      stageStates: initialStageStates,
       evidenceSignalsCollected: 0,
       totalSignals: activeSignals.length,
     });
@@ -99,7 +113,12 @@ export class ApiAnalysisProvider implements AnalysisProvider {
             qualitativeState: "evaluating",
             telemetry: "Extracting representative keyframes (Beginning, 25%, 50%, 75%, End)...",
             percentage: 30,
-            completedStages: ["file-validation"],
+            completedStages: ["file-inspection"],
+            stageStates: {
+              ...initialStageStates,
+              "file-inspection": { status: "complete", qualitativeState: "available", detail: "File verified." },
+              "ai-detection": { status: "in-progress", qualitativeState: "evaluating", detail: "Sampling frames for multimodal inspection." },
+            },
             evidenceSignalsCollected: 0,
             totalSignals: activeSignals.length,
           });
@@ -139,24 +158,33 @@ export class ApiAnalysisProvider implements AnalysisProvider {
 
       const report: TrustReport = await response.json();
 
+      const finalStageStates: Record<string, any> = {
+        "file-inspection": { status: "complete", qualitativeState: "available", detail: "Container valid." },
+        "ai-detection": { status: "complete", qualitativeState: "available", detail: "Groq visual analysis complete." },
+        provenance: { status: "complete", qualitativeState: "available", detail: "C2PA audit complete." },
+        metadata: { status: "complete", qualitativeState: "available", detail: "EXIF/XMP extracted." },
+        forensics: { status: "complete", qualitativeState: "available", detail: "Quantization & container audit complete." },
+        aggregation: { status: "complete", qualitativeState: "available", detail: "Transparent assessment compiled." },
+      };
+
       // Final complete stage
       options?.onProgress?.({
-        stageIndex: 6,
-        stageNumber: "07",
-        stageName: "BUILDING REPORT",
+        stageIndex: 5,
+        stageNumber: "06",
+        stageName: "EVIDENCE AGGREGATION",
         stageStatus: "complete",
         qualitativeState: "available",
         telemetry: "Multi-signal synthesis complete. Trust Report generated.",
         percentage: 100,
         completedStages: [
-          "file-validation",
-          "generating-hash",
-          "checking-provenance",
-          "reading-metadata",
-          "ai-visual-analysis",
-          "forensic-analysis",
-          "building-report",
+          "file-inspection",
+          "ai-detection",
+          "provenance",
+          "metadata",
+          "forensics",
+          "aggregation",
         ],
+        stageStates: finalStageStates,
         evidenceSignalsCollected: activeSignals.length,
         totalSignals: activeSignals.length,
       });
@@ -224,32 +252,58 @@ export class ApiAnalysisProvider implements AnalysisProvider {
   ): ReturnType<typeof setInterval> {
     let currentStage = 1;
     const stages = [
-      { num: "02", name: "GENERATING HASH", telemetry: "Computing cryptographic SHA-256 binary digest..." },
-      { num: "03", name: "CHECKING PROVENANCE", telemetry: "Scanning JUMBF boxes and C2PA Content Credentials..." },
-      { num: "04", name: "READING METADATA", telemetry: "Extracting EXIF, XMP, and editing software headers..." },
-      { num: "05", name: "AI VISUAL ANALYSIS", telemetry: "Running Groq Qwen multimodal visual evidence inspection..." },
-      { num: "06", name: "FORENSIC ANALYSIS", telemetry: "Auditing JPEG DQT quantization tables & container boundaries..." },
+      { id: "ai-detection", num: "02", name: "AI DETECTION", telemetry: "Running Groq Qwen multimodal visual evidence inspection..." },
+      { id: "provenance", num: "03", name: "PROVENANCE", telemetry: "Scanning JUMBF boxes and C2PA Content Credentials..." },
+      { id: "metadata", num: "04", name: "METADATA", telemetry: "Extracting EXIF, XMP, and editing software headers..." },
+      { id: "forensics", num: "05", name: "FORENSICS", telemetry: "Auditing JPEG DQT quantization tables & container boundaries..." },
+      { id: "aggregation", num: "06", name: "EVIDENCE AGGREGATION", telemetry: "Synthesizing independent evidence signals into Trust Report..." },
     ];
 
+    const currentStates: Record<string, any> = {
+      "file-inspection": { status: "complete", qualitativeState: "available", detail: "Container valid." },
+      "ai-detection": { status: "pending", qualitativeState: "pending", detail: "Waiting for visual analysis." },
+      provenance: { status: "pending", qualitativeState: "pending", detail: "Waiting for C2PA container inspection." },
+      metadata: { status: "pending", qualitativeState: "pending", detail: "Waiting for EXIF/XMP extraction." },
+      forensics: { status: "pending", qualitativeState: "pending", detail: "Waiting for DQT table inspection." },
+      aggregation: { status: "pending", qualitativeState: "pending", detail: "Waiting for evidence synthesis." },
+    };
+
     return setInterval(() => {
-      if (currentStage < stages.length && onProgress) {
-        const stage = stages[currentStage];
-        onProgress({
-          stageIndex: currentStage,
-          stageNumber: stage.num,
-          stageName: stage.name,
-          stageStatus: "in-progress",
-          qualitativeState: "evaluating",
-          telemetry: stage.telemetry,
-          percentage: Math.min(20 + currentStage * 14, 90),
-          completedStages: stages
-            .slice(0, currentStage)
-            .map((s) => s.name.toLowerCase().replace(/\s+/g, "-")),
-          evidenceSignalsCollected: Math.min(currentStage, activeSignals.length),
-          totalSignals: activeSignals.length,
-        });
+      if (currentStage <= stages.length && onProgress) {
+        const stage = stages[currentStage - 1];
+        if (stage) {
+          // Mark previous as complete
+          if (currentStage > 1) {
+            const prevStage = stages[currentStage - 2];
+            currentStates[prevStage.id] = {
+              status: "complete",
+              qualitativeState: "available",
+              detail: `${prevStage.name} complete.`,
+            };
+          }
+          currentStates[stage.id] = {
+            status: "in-progress",
+            qualitativeState: "evaluating",
+            detail: stage.telemetry,
+          };
+
+          onProgress({
+            stageIndex: currentStage,
+            stageNumber: stage.num,
+            stageName: stage.name,
+            stageStatus: "in-progress",
+            qualitativeState: "evaluating",
+            telemetry: stage.telemetry,
+            percentage: Math.min(20 + currentStage * 14, 92),
+            completedStages: ["file-inspection", ...stages.slice(0, currentStage - 1).map((s) => s.id)],
+            stageStates: { ...currentStates },
+            evidenceSignalsCollected: Math.min(currentStage, activeSignals.length),
+            totalSignals: activeSignals.length,
+          });
+        }
         currentStage++;
       }
     }, 1100);
   }
+}
 }
