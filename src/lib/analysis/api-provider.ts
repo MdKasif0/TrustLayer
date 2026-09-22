@@ -306,4 +306,3 @@ export class ApiAnalysisProvider implements AnalysisProvider {
     }, 1100);
   }
 }
-}
