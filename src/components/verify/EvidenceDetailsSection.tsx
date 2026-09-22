@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TrustReport, ProvenanceState } from "@/lib/types";
-import { VisualEvidenceMap } from "@/components/verify/VisualEvidenceMap";
+import { TrustReport } from "@/lib/types";
 import { formatFileSize } from "@/lib/services/fileInspector";
 import {
   BrainCircuit,
@@ -27,7 +26,6 @@ export function EvidenceDetailsSection({
   activeSection,
   onToggleSection,
 }: EvidenceDetailsSectionProps) {
-  // Expandable state for each of the 4 sections
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     ai: true,
     provenance: false,
@@ -35,7 +33,6 @@ export function EvidenceDetailsSection({
     forensics: false,
   });
 
-  // When an external section is targeted (e.g. from "View evidence" click), expand it
   useEffect(() => {
     if (activeSection) {
       setExpanded((prev) => ({
@@ -54,6 +51,11 @@ export function EvidenceDetailsSection({
       [id]: !prev[id],
     }));
   };
+
+  const aiSignal = report.signalResults.find((s) => s.signalId === "ai-detection");
+  const provSignal = report.signalResults.find((s) => s.signalId === "provenance");
+  const metaSignal = report.signalResults.find((s) => s.signalId === "metadata");
+  const forensicSignal = report.signalResults.find((s) => s.signalId === "forensic");
 
   return (
     <section id="evidence-details" className="space-y-6 scroll-mt-24">
@@ -85,7 +87,6 @@ export function EvidenceDetailsSection({
             activeSection === "ai" && "ring-2 ring-primary/30"
           )}
         >
-          {/* Header & Toggle */}
           <button
             type="button"
             onClick={() => toggleSection("ai")}
@@ -93,23 +94,35 @@ export function EvidenceDetailsSection({
             aria-expanded={expanded.ai}
           >
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[#FDF2F2] flex items-center justify-center text-[#991B1B] shrink-0 border border-[#F8B4B4]">
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                  aiSignal?.anomalyDetected
+                    ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                    : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                }`}
+              >
                 <BrainCircuit className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h4 className="text-base font-bold text-foreground font-mono">
-                    AI Detection
+                    AI Visual Analysis
                   </h4>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                    HIGH SIGNAL
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      aiSignal?.anomalyDetected
+                        ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                        : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                    }`}
+                  >
+                    {aiSignal?.signalValue || "ANALYZED"}
                   </span>
                   <span className="text-[10px] font-mono text-secondary hidden sm:inline">
-                    Synthetic media indicators
+                    Model: Groq qwen/qwen3.8-27b
                   </span>
                 </div>
                 <p className="text-xs text-secondary mt-1 line-clamp-1">
-                  Visual patterns associated with synthetic media were detected.
+                  {aiSignal?.summary || "Observable visual evidence evaluated for generative artifacts."}
                 </p>
               </div>
             </div>
@@ -119,19 +132,13 @@ export function EvidenceDetailsSection({
                 {expanded.ai ? "Collapse dossier" : "Expand dossier"}
               </span>
               <div className="w-7 h-7 rounded-md border border-border flex items-center justify-center text-secondary">
-                {expanded.ai ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
+                {expanded.ai ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </div>
             </div>
           </button>
 
-          {/* Dossier Body */}
           {expanded.ai && (
             <div className="px-5 pb-6 sm:px-6 sm:pb-7 pt-2 border-t border-border space-y-6">
-              {/* Four Sub-Blocks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. WHAT WAS CHECKED */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
@@ -143,42 +150,44 @@ export function EvidenceDetailsSection({
                   </div>
                   <ul className="text-xs text-foreground/90 space-y-1.5 list-disc list-inside font-sans leading-relaxed">
                     <li>
-                      <span className="font-semibold text-foreground">Ensemble Model Suite:</span> TrustLayer Ensemble-DF v2.4 (diffusion &amp; GAN spatial frequency discriminator).
+                      <span className="font-semibold text-foreground">AI Multimodal Vision:</span> Evaluated using Groq server-side multimodal model (<code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">qwen/qwen3.8-27b</code>).
                     </li>
                     <li>
-                      <span className="font-semibold text-foreground">Frequency Domain:</span> 2D Discrete Cosine Transform (DCT) and azimuthal spectral distribution across 64 frequency bands.
+                      <span className="font-semibold text-foreground">Generative Artifacts:</span> Fine skin texture smoothness, diffusion boundaries, unnatural anatomical features, and text anomalies.
                     </li>
                     <li>
-                      <span className="font-semibold text-foreground">Synthesis Boundary Checks:</span> High-pass Laplacian filters inspecting micro-texture gradients and upsampling stride artifacts.
+                      <span className="font-semibold text-foreground">Prompt Injection Defense:</span> Visible text inside the media is strictly evaluated as visual evidence, never instructions.
                     </li>
                   </ul>
                 </div>
 
                 {/* 2. WHAT WAS FOUND */}
-                <div className="p-4 rounded-lg bg-[#FDF2F2]/40 border border-[#F8B4B4]/70 space-y-2">
+                <div className={`p-4 rounded-lg border space-y-2 ${
+                  aiSignal?.anomalyDetected ? "bg-[#FDF2F2]/40 border-[#F8B4B4]/70" : "bg-[#FAFBF9] border-border/80"
+                }`}>
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#991B1B] shrink-0" />
-                    <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-[#991B1B]">
-                      What Was Found
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${aiSignal?.anomalyDetected ? "bg-[#991B1B]" : "bg-primary"}`} />
+                    <h5 className={`text-xs font-mono font-bold uppercase tracking-wider ${aiSignal?.anomalyDetected ? "text-[#991B1B]" : "text-foreground"}`}>
+                      Observable Evidence ({aiSignal?.items.length || 0} findings)
                     </h5>
                   </div>
-                  <ul className="text-xs text-[#17201A] space-y-1.5 list-disc list-inside font-sans leading-relaxed">
-                    <li>
-                      <span className="font-semibold text-foreground">Periodic Grid Attenuation:</span> Radial spectral power spikes at normalized frequencies $(u, v) = (0.35, 0.42)$ characteristic of generative convolutional upsampling.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Gradient Falloff Discontinuity:</span> Focal subject contours exhibit algorithmic alpha blending with no natural optical depth-of-field transition.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Spectral Kurtosis:</span> Elevated kurtosis metric of <code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">4.12</code> (Baseline camera noise $\approx 2.10$).
-                    </li>
+                  <ul className="text-xs text-foreground space-y-1.5 list-disc list-inside font-sans leading-relaxed">
+                    {aiSignal?.items && aiSignal.items.length > 0 ? (
+                      aiSignal.items.map((item, i) => (
+                        <li key={i}>
+                          <span className="font-semibold text-foreground">{item.title}:</span>{" "}
+                          <span>{item.summary}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>No prominent synthetic indicators or manipulation anomalies observed.</li>
+                    )}
                   </ul>
                 </div>
               </div>
 
               {/* 3. WHY IT MATTERS & 4. LIMITATIONS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 3. WHY IT MATTERS */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
@@ -187,11 +196,10 @@ export function EvidenceDetailsSection({
                     </h5>
                   </div>
                   <p className="text-xs text-secondary leading-relaxed font-sans">
-                    Generative models assemble pixels through mathematical algorithms that produce subtle, periodic lattice structures across fine textures. Physical camera sensors and glass lenses generate continuous photon shot noise rather than mathematical grid artifacts.
+                    Generative models frequently introduce localized pixel inconsistencies, unnatural bilateral symmetry, or text geometry flaws. Distinguishing raw visual observation from interpretation ensures objective assessment.
                   </p>
                 </div>
 
-                {/* 4. LIMITATIONS */}
                 <div className="p-4 rounded-lg bg-[#FBF7EE] border border-[#E8D5A0] space-y-1.5">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 text-[#92610F] shrink-0" />
@@ -200,7 +208,7 @@ export function EvidenceDetailsSection({
                     </h5>
                   </div>
                   <p className="text-xs text-[#5D420F] leading-relaxed font-sans">
-                    AI detection is probabilistic and may perform differently on unseen generation methods. Heavy social media re-compression or aggressive downsampling can partially obscure mathematical lattice artifacts.
+                    Visual analysis alone cannot establish authenticity with absolute certainty. High-quality synthetic media or heavy lossy recompression can obscure indicators. TrustLayer relies on qualitative confidence, not uncalibrated percentages.
                   </p>
                 </div>
               </div>
@@ -219,7 +227,6 @@ export function EvidenceDetailsSection({
             activeSection === "provenance" && "ring-2 ring-primary/30"
           )}
         >
-          {/* Header & Toggle */}
           <button
             type="button"
             onClick={() => toggleSection("provenance")}
@@ -227,7 +234,13 @@ export function EvidenceDetailsSection({
             aria-expanded={expanded.provenance}
           >
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[#FBF7EE] flex items-center justify-center text-[#92610F] shrink-0 border border-[#E8D5A0]">
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                  provSignal?.status === "analyzed"
+                    ? "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                    : "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                }`}
+              >
                 <Fingerprint className="w-5 h-5" />
               </div>
               <div>
@@ -235,15 +248,21 @@ export function EvidenceDetailsSection({
                   <h4 className="text-base font-bold text-foreground font-mono">
                     Provenance
                   </h4>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                    NOT FOUND
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      provSignal?.status === "analyzed"
+                        ? "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                        : "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                    }`}
+                  >
+                    {provSignal?.signalValue || "NOT FOUND"}
                   </span>
                   <span className="text-[10px] font-mono text-secondary hidden sm:inline">
                     C2PA / Content Credentials
                   </span>
                 </div>
                 <p className="text-xs text-secondary mt-1 line-clamp-1">
-                  No verifiable C2PA Content Credentials were found in container headers.
+                  {provSignal?.summary || "Binary container inspection for C2PA Content Credentials."}
                 </p>
               </div>
             </div>
@@ -253,21 +272,14 @@ export function EvidenceDetailsSection({
                 {expanded.provenance ? "Collapse dossier" : "Expand dossier"}
               </span>
               <div className="w-7 h-7 rounded-md border border-border flex items-center justify-center text-secondary">
-                {expanded.provenance ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
+                {expanded.provenance ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </div>
             </div>
           </button>
 
-          {/* Dossier Body */}
           {expanded.provenance && (
             <div className="px-5 pb-6 sm:px-6 sm:pb-7 pt-2 border-t border-border space-y-6">
-              {/* Four Sub-Blocks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. WHAT WAS CHECKED */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
@@ -277,66 +289,49 @@ export function EvidenceDetailsSection({
                   </div>
                   <ul className="text-xs text-foreground/90 space-y-1.5 list-disc list-inside font-sans leading-relaxed">
                     <li>
-                      <span className="font-semibold text-foreground">C2PA Manifest Box:</span> Searched binary container for standard JUMBF (JPEG Universal Metadata Box Format) assertions.
+                      <span className="font-semibold text-foreground">C2PA Manifest Scanners:</span> JPEG APP11 JUMBF boxes, PNG <code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">c2pa</code> chunks, and MP4 ISO-BMFF UUID boxes.
                     </li>
                     <li>
-                      <span className="font-semibold text-foreground">Cryptographic Signatures:</span> Evaluated public-key PKI certificate anchors and timestamp authority credentials.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Lineage Assertions:</span> Checked for parent assertion history, edit action ingredients, and camera hardware bindings.
+                      <span className="font-semibold text-foreground">Cryptographic Manifests:</span> Claim generators, signing times, and assertion bindings.
                     </li>
                   </ul>
                 </div>
 
-                {/* 2. WHAT WAS FOUND */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#B7791F] shrink-0" />
                     <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
-                      What Was Found
+                      Inspection Findings
                     </h5>
                   </div>
-                  <div className="border border-border rounded-lg overflow-hidden text-xs font-mono">
-                    <table className="w-full text-left">
-                      <tbody className="divide-y divide-border">
-                        <tr className="bg-surface">
-                          <td className="py-2 px-3 text-secondary font-semibold">C2PA Status</td>
-                          <td className="py-2 px-3 font-bold text-foreground">Not found in container</td>
-                        </tr>
-                        <tr className="bg-[#FAFBF9]">
-                          <td className="py-2 px-3 text-secondary font-semibold">Content Credentials</td>
-                          <td className="py-2 px-3 text-secondary">JUMBF box absent</td>
-                        </tr>
-                        <tr className="bg-surface">
-                          <td className="py-2 px-3 text-secondary font-semibold">Signer</td>
-                          <td className="py-2 px-3 text-secondary">Unsigned / No key attached</td>
-                        </tr>
-                        <tr className="bg-[#FAFBF9]">
-                          <td className="py-2 px-3 text-secondary font-semibold">Verification State</td>
-                          <td className="py-2 px-3 text-[#92610F] font-semibold">Standard Consumer State</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <ul className="text-xs text-foreground space-y-1.5 list-disc list-inside font-sans leading-relaxed">
+                    {provSignal?.items && provSignal.items.length > 0 ? (
+                      provSignal.items.map((item, i) => (
+                        <li key={i}>
+                          <span className="font-semibold text-foreground">{item.title}:</span>{" "}
+                          <span>{item.summary}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>No C2PA Content Credentials were detected in the uploaded file.</li>
+                    )}
+                  </ul>
                 </div>
               </div>
 
-              {/* 3. WHY IT MATTERS & 4. LIMITATIONS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 3. WHY IT MATTERS */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-primary shrink-0" />
                     <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
-                      Why It Matters (Forensic Standard)
+                      Crucial Aggregation Rule
                     </h5>
                   </div>
                   <p className="text-xs text-secondary leading-relaxed font-sans">
-                    Cryptographic provenance provides verifiable proof of origin when present. However, <strong className="text-foreground">absence of C2PA credentials does NOT imply media is synthetic or manipulated</strong>. Most consumer cameras and social media publishing pipelines strip metadata by default.
+                    <strong className="text-foreground">Absence of C2PA credentials does NOT imply media is synthetic or manipulated.</strong> Most consumer cameras and social media platforms do not yet embed C2PA hardware credentials or strip them upon upload.
                   </p>
                 </div>
 
-                {/* 4. LIMITATIONS */}
                 <div className="p-4 rounded-lg bg-[#FBF7EE] border border-[#E8D5A0] space-y-1.5">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 text-[#92610F] shrink-0" />
@@ -345,7 +340,7 @@ export function EvidenceDetailsSection({
                     </h5>
                   </div>
                   <p className="text-xs text-[#5D420F] leading-relaxed font-sans">
-                    C2PA adoption is voluntary and actively growing. Standard web operations—such as taking a screenshot, resizing an image in chat apps, or downloading from the web—routinely sever the provenance chain of custody.
+                    When present, C2PA verifies claimed provenance assertions and edit history; complete trust requires validating the signing certificate against recognized root anchors.
                   </p>
                 </div>
               </div>
@@ -364,7 +359,6 @@ export function EvidenceDetailsSection({
             activeSection === "metadata" && "ring-2 ring-primary/30"
           )}
         >
-          {/* Header & Toggle */}
           <button
             type="button"
             onClick={() => toggleSection("metadata")}
@@ -372,7 +366,13 @@ export function EvidenceDetailsSection({
             aria-expanded={expanded.metadata}
           >
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[#FBF7EE] flex items-center justify-center text-[#92610F] shrink-0 border border-[#E8D5A0]">
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                  metaSignal?.anomalyDetected
+                    ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                    : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                }`}
+              >
                 <FileSearch className="w-5 h-5" />
               </div>
               <div>
@@ -380,15 +380,21 @@ export function EvidenceDetailsSection({
                   <h4 className="text-base font-bold text-foreground font-mono">
                     Metadata
                   </h4>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                    REVIEW
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      metaSignal?.anomalyDetected
+                        ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                        : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                    }`}
+                  >
+                    {metaSignal?.signalValue || "REVIEWED"}
                   </span>
                   <span className="text-[10px] font-mono text-secondary hidden sm:inline">
-                    EXIF / file information
+                    EXIF / XMP / Software tags
                   </span>
                 </div>
                 <p className="text-xs text-secondary mt-1 line-clamp-1">
-                  File-level metadata contains characteristics requiring further review.
+                  {metaSignal?.summary || "Binary metadata extraction from container headers."}
                 </p>
               </div>
             </div>
@@ -398,21 +404,14 @@ export function EvidenceDetailsSection({
                 {expanded.metadata ? "Collapse dossier" : "Expand dossier"}
               </span>
               <div className="w-7 h-7 rounded-md border border-border flex items-center justify-center text-secondary">
-                {expanded.metadata ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
+                {expanded.metadata ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </div>
             </div>
           </button>
 
-          {/* Dossier Body */}
           {expanded.metadata && (
             <div className="px-5 pb-6 sm:px-6 sm:pb-7 pt-2 border-t border-border space-y-6">
-              {/* Four Sub-Blocks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. WHAT WAS CHECKED */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
@@ -422,92 +421,72 @@ export function EvidenceDetailsSection({
                   </div>
                   <ul className="text-xs text-foreground/90 space-y-1.5 list-disc list-inside font-sans leading-relaxed">
                     <li>
-                      <span className="font-semibold text-foreground">Header Dictionaries:</span> EXIF IFD0, SubIFD, and GPS metadata records.
+                      <span className="font-semibold text-foreground">Header Inspection:</span> JPEG APP1 EXIF (IFD0, SubIFD), XMP RDF packets, and IPTC records.
                     </li>
                     <li>
-                      <span className="font-semibold text-foreground">Quantization Profiles:</span> Luminance and chrominance discrete cosine transform quantization matrices.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Encoder Signatures:</span> Software creator strings, camera make/model tags, and container padding alignment.
+                      <span className="font-semibold text-foreground">Camera &amp; Software Tags:</span> Hardware Make, Model, Software, and creation timestamps.
                     </li>
                   </ul>
                 </div>
 
-                {/* 2. WHAT WAS FOUND */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#B7791F] shrink-0" />
                     <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
-                      What Was Found
+                      Extracted Metadata
                     </h5>
                   </div>
-                  <ul className="text-xs text-[#17201A] space-y-1.5 list-disc list-inside font-sans leading-relaxed">
-                    <li>
-                      <span className="font-semibold text-foreground">Software Tag:</span> Identified server-side encoding signature: <code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">libvips / Composite Web Export</code>.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Quantization Table Mismatch:</span> DQT matrix diverges from standard camera sensor firmware curves.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Camera Firmware Stripped:</span> MakerNote and lens serial blocks absent.
-                    </li>
+                  <ul className="text-xs text-foreground space-y-1.5 list-disc list-inside font-sans leading-relaxed">
+                    {metaSignal?.items && metaSignal.items.length > 0 ? (
+                      metaSignal.items.map((item, i) => (
+                        <li key={i}>
+                          <span className="font-semibold text-foreground">{item.title}:</span>{" "}
+                          <span>{item.summary}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Metadata headers reviewed. Minimal metadata present.</li>
+                    )}
                   </ul>
                 </div>
               </div>
 
-              {/* Full Technical Metadata Table */}
+              {/* Technical Metadata Table */}
               <div className="border border-border rounded-lg overflow-hidden text-xs font-mono">
                 <table className="w-full text-left">
                   <thead className="bg-[#F0F2F0] border-b border-border text-[10px] uppercase font-bold text-secondary">
                     <tr>
-                      <th className="py-2.5 px-4">Metadata Field</th>
-                      <th className="py-2.5 px-4">Extracted Value</th>
-                      <th className="py-2.5 px-4">Forensic Assessment</th>
-                      <th className="py-2.5 px-4 hidden md:table-cell">Plain-Language Explanation</th>
+                      <th className="py-2.5 px-4">Field</th>
+                      <th className="py-2.5 px-4">Value</th>
+                      <th className="py-2.5 px-4">Assessment Note</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     <tr className="bg-surface">
-                      <td className="py-2.5 px-4 font-semibold text-foreground">File type</td>
-                      <td className="py-2.5 px-4 text-foreground">{report.mediaFile.type} ({report.mediaFile.extension})</td>
-                      <td className="py-2.5 px-4 text-success font-medium">Standard Container</td>
-                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans hidden md:table-cell">Conforms to standard image container specification.</td>
+                      <td className="py-2.5 px-4 font-semibold text-foreground">Filename</td>
+                      <td className="py-2.5 px-4 text-foreground">{report.mediaFile.name}</td>
+                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans">Sanitized container input</td>
                     </tr>
                     <tr className="bg-[#FAFBF9]">
-                      <td className="py-2.5 px-4 font-semibold text-foreground">File size</td>
-                      <td className="py-2.5 px-4 text-foreground">{formatFileSize(report.mediaFile.size)}</td>
-                      <td className="py-2.5 px-4 text-success font-medium">Nominal</td>
-                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans hidden md:table-cell">Byte length verified against header records.</td>
+                      <td className="py-2.5 px-4 font-semibold text-foreground">Format &amp; Size</td>
+                      <td className="py-2.5 px-4 text-foreground">{report.mediaFile.type} ({formatFileSize(report.mediaFile.size)})</td>
+                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans">Binary length verified</td>
                     </tr>
                     <tr className="bg-surface">
                       <td className="py-2.5 px-4 font-semibold text-foreground">Dimensions</td>
-                      <td className="py-2.5 px-4 text-foreground">{report.mediaFile.width && report.mediaFile.height ? `${report.mediaFile.width} × ${report.mediaFile.height} px` : "Adaptive"}</td>
-                      <td className="py-2.5 px-4 text-success font-medium">Verified</td>
-                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans hidden md:table-cell">Raster pixel aspect ratio verified.</td>
+                      <td className="py-2.5 px-4 text-foreground">{report.mediaFile.width && report.mediaFile.height ? `${report.mediaFile.width} × ${report.mediaFile.height}` : "Unavailable"}</td>
+                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans">Decoded frame dimensions</td>
                     </tr>
-                    <tr className="bg-[#FFFDF9]">
-                      <td className="py-2.5 px-4 font-semibold text-foreground">Software tag</td>
-                      <td className="py-2.5 px-4 text-foreground">libvips / Composite Web Export</td>
-                      <td className="py-2.5 px-4 font-bold text-[#92610F]">
-                        <span className="px-1.5 py-0.5 rounded bg-warning-bg border border-[#E8D5A0]">Review Needed</span>
-                      </td>
-                      <td className="py-2.5 px-4 text-[#92610F] text-[11px] font-sans hidden md:table-cell">Encoded by server-side graphics library rather than on-device firmware.</td>
-                    </tr>
-                    <tr className="bg-[#FFFDF9]">
-                      <td className="py-2.5 px-4 font-semibold text-foreground">Camera information</td>
-                      <td className="py-2.5 px-4 text-secondary">Maker: None / Model: Stripped</td>
-                      <td className="py-2.5 px-4 font-bold text-[#92610F]">
-                        <span className="px-1.5 py-0.5 rounded bg-warning-bg border border-[#E8D5A0]">Stripped</span>
-                      </td>
-                      <td className="py-2.5 px-4 text-[#92610F] text-[11px] font-sans hidden md:table-cell">Missing hardware MakerNotes common in web re-saves or AI generation exports.</td>
+                    <tr className="bg-[#FAFBF9]">
+                      <td className="py-2.5 px-4 font-semibold text-foreground">SHA-256 Fingerprint</td>
+                      <td className="py-2.5 px-4 text-foreground font-mono text-[11px] truncate max-w-xs">{report.mediaFile.hashSha256 || "e3b0c44..."}</td>
+                      <td className="py-2.5 px-4 text-secondary text-[11px] font-sans">Exact binary identifier</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              {/* 3. WHY IT MATTERS & 4. LIMITATIONS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 3. WHY IT MATTERS */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
@@ -516,11 +495,10 @@ export function EvidenceDetailsSection({
                     </h5>
                   </div>
                   <p className="text-xs text-secondary leading-relaxed font-sans">
-                    Hardware cameras embed proprietary quantization tables and hardware tags upon sensor capture. Mismatched quantization matrices indicate the file was rendered or re-saved by synthetic editing software.
+                    Editing software tags indicate post-processing. However, editing software is common in professional photography workflows and does NOT automatically mean the content is fake.
                   </p>
                 </div>
 
-                {/* 4. LIMITATIONS */}
                 <div className="p-4 rounded-lg bg-[#FBF7EE] border border-[#E8D5A0] space-y-1.5">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 text-[#92610F] shrink-0" />
@@ -548,7 +526,6 @@ export function EvidenceDetailsSection({
             activeSection === "forensics" && "ring-2 ring-primary/30"
           )}
         >
-          {/* Header & Toggle */}
           <button
             type="button"
             onClick={() => toggleSection("forensics")}
@@ -556,23 +533,35 @@ export function EvidenceDetailsSection({
             aria-expanded={expanded.forensics}
           >
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[#FDF2F2] flex items-center justify-center text-[#991B1B] shrink-0 border border-[#F8B4B4]">
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                  forensicSignal?.anomalyDetected
+                    ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                    : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                }`}
+              >
                 <Layers className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h4 className="text-base font-bold text-foreground font-mono">
-                    Forensics
+                    Forensics &amp; Quantization
                   </h4>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                    DETECTED
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      forensicSignal?.anomalyDetected
+                        ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                        : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                    }`}
+                  >
+                    {forensicSignal?.signalValue || "NORMAL"}
                   </span>
                   <span className="text-[10px] font-mono text-secondary hidden sm:inline">
-                    Visual / temporal analysis
+                    JPEG DQT / Container audit
                   </span>
                 </div>
                 <p className="text-xs text-secondary mt-1 line-clamp-1">
-                  Visual inconsistencies and localized error-level disparities were identified.
+                  {forensicSignal?.summary || "Quantization table and container structural analysis."}
                 </p>
               </div>
             </div>
@@ -582,21 +571,14 @@ export function EvidenceDetailsSection({
                 {expanded.forensics ? "Collapse dossier" : "Expand dossier"}
               </span>
               <div className="w-7 h-7 rounded-md border border-border flex items-center justify-center text-secondary">
-                {expanded.forensics ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
+                {expanded.forensics ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </div>
             </div>
           </button>
 
-          {/* Dossier Body */}
           {expanded.forensics && (
             <div className="px-5 pb-6 sm:px-6 sm:pb-7 pt-2 border-t border-border space-y-6">
-              {/* Four Sub-Blocks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. WHAT WAS CHECKED */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
@@ -606,45 +588,39 @@ export function EvidenceDetailsSection({
                   </div>
                   <ul className="text-xs text-foreground/90 space-y-1.5 list-disc list-inside font-sans leading-relaxed">
                     <li>
-                      <span className="font-semibold text-foreground">Error Level Analysis (ELA):</span> 95% re-compression baseline comparing residual error distribution across spatial quadrants.
+                      <span className="font-semibold text-foreground">JPEG DQT Tables:</span> Discrete Quantization Tables (<code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">0xFFDB</code>) and IJG compression factor estimation.
                     </li>
                     <li>
-                      <span className="font-semibold text-foreground">Sensor Noise Uniformity (PRNU):</span> High-pass filtered noise residuals tested for cross-quadrant coherence.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Gradient &amp; Lighting:</span> Specular highlight vector estimation and edge boundary gradient continuity.
+                      <span className="font-semibold text-foreground">Container Integrity:</span> Verified stream termination at End-of-Image (<code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">0xFFD9</code>) or PNG IEND chunk to audit trailing payload data.
                     </li>
                   </ul>
                 </div>
 
-                {/* 2. WHAT WAS FOUND */}
-                <div className="p-4 rounded-lg bg-[#FDF2F2]/40 border border-[#F8B4B4]/70 space-y-2">
+                <div className={`p-4 rounded-lg border space-y-2 ${
+                  forensicSignal?.anomalyDetected ? "bg-[#FDF2F2]/40 border-[#F8B4B4]/70" : "bg-[#FAFBF9] border-border/80"
+                }`}>
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#991B1B] shrink-0" />
-                    <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-[#991B1B]">
-                      What Was Found
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${forensicSignal?.anomalyDetected ? "bg-[#991B1B]" : "bg-primary"}`} />
+                    <h5 className={`text-xs font-mono font-bold uppercase tracking-wider ${forensicSignal?.anomalyDetected ? "text-[#991B1B]" : "text-foreground"}`}>
+                      Forensic Findings
                     </h5>
                   </div>
-                  <ul className="text-xs text-[#17201A] space-y-1.5 list-disc list-inside font-sans leading-relaxed">
-                    <li>
-                      <span className="font-semibold text-foreground">ELA Variance Delta:</span> <code className="font-mono text-[11px] bg-surface px-1 py-0.5 rounded border border-border">+28.6%</code> discontinuous error clustering along focal boundaries.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Noise Floor Attenuation:</span> Spatial high-frequency smoothing observed on primary subject perimeter.
-                    </li>
-                    <li>
-                      <span className="font-semibold text-foreground">Edge Halos:</span> Pixel boundary gradient analysis identified algorithmic alpha transition halos.
-                    </li>
+                  <ul className="text-xs text-foreground space-y-1.5 list-disc list-inside font-sans leading-relaxed">
+                    {forensicSignal?.items && forensicSignal.items.length > 0 ? (
+                      forensicSignal.items.map((item, i) => (
+                        <li key={i}>
+                          <span className="font-semibold text-foreground">{item.title}:</span>{" "}
+                          <span>{item.summary}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Quantization tables and container structure conform to standard expectations.</li>
+                    )}
                   </ul>
                 </div>
               </div>
 
-              {/* Visual Evidence Map Integration */}
-              <VisualEvidenceMap media={report.mediaFile} />
-
-              {/* 3. WHY IT MATTERS & 4. LIMITATIONS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 3. WHY IT MATTERS */}
                 <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
@@ -653,20 +629,19 @@ export function EvidenceDetailsSection({
                     </h5>
                   </div>
                   <p className="text-xs text-secondary leading-relaxed font-sans">
-                    Physical cameras record real-world photons through optical lenses, resulting in uniform compression resistance and consistent noise floors across an entire frame. Discontinuous ELA error clusters indicate differential compression or localized digital synthesis.
+                    Quantization tables reveal how the image data was encoded. Discrepancies between container markers and decoded frames can highlight steganographic appending or non-standard rendering pipelines.
                   </p>
                 </div>
 
-                {/* 4. LIMITATIONS */}
                 <div className="p-4 rounded-lg bg-[#FBF7EE] border border-[#E8D5A0] space-y-1.5">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 text-[#92610F] shrink-0" />
                     <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-[#92610F]">
-                      Limitations
+                      Active Capabilities &amp; Limitations
                     </h5>
                   </div>
                   <p className="text-xs text-[#5D420F] leading-relaxed font-sans">
-                    Multiple re-compression cycles (e.g. repeated re-saving on social networks) gradually wash out ELA variance. Forensic visual indicators must always be interpreted in conjunction with metadata and frequency signals.
+                    Advanced forensic models (such as sensor PRNU fingerprinting, camera-specific noise floor modeling, and GAN latent residual analysis) are not active in this deployment. Findings are based strictly on binary container validation and DQT tables.
                   </p>
                 </div>
               </div>
@@ -677,4 +652,3 @@ export function EvidenceDetailsSection({
     </section>
   );
 }
-
