@@ -350,16 +350,43 @@ TrustLayer rejects deceptive pseudo-precise percentages (e.g., *"99.2% AI"*). In
 
 ---
 
+## 🔑 Environment Variables
+
+TrustLayer requires the Groq API key configured strictly on the server side:
+
+```env
+# Server-Side Groq AI Credentials (NEVER expose to client bundles or commit secrets)
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=qwen/qwen3.8-27b
+
+# Verification Mode
+# Set to 'false' to run live Groq visual analysis & real forensic pipelines
+# Set to 'true' to run deterministic offline demonstrations
+NEXT_PUBLIC_DEMO_MODE=false
+
+# Canonical Site URL
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+| Variable | Scope | Required | Purpose |
+|:---|:---:|:---:|:---|
+| `GROQ_API_KEY` | Server-Only | Yes (Live Mode) | Secret authorization token for Groq API completions |
+| `GROQ_MODEL` | Server-Only | No (defaults to `qwen/qwen3.8-27b`) | Exact Groq vision model identifier |
+| `NEXT_PUBLIC_DEMO_MODE` | Universal | No (defaults to `false`) | Toggle between live verification and offline demo simulation |
+| `NEXT_PUBLIC_SITE_URL` | Client/Server | No (defaults to `http://localhost:3000`) | Canonical root URL for metadata, Open Graph, and permalinks |
+
+---
+
 ## 💻 Local Development
 
 ### Prerequisites
-- **Node.js**: `20.x` or higher
+- **Node.js**: `20.x` or higher (verified on Node 24)
 - **npm**: `10.x` or higher
+- **Groq API Key**: with access to `qwen/qwen3.8-27b`
 
 ### 1. Clone & Install
 
 ```bash
-# Clone repository
 git clone https://github.com/MdKasif0/TrustLayer.git
 cd TrustLayer
 
@@ -369,17 +396,18 @@ npm install
 
 ### 2. Configure Environment
 
-Create a `.env.local` file in the root directory:
+Create a `.env.local` file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Default local configuration:
+Add your `GROQ_API_KEY`:
 
 ```env
-# TrustLayer Local Development Configuration
-NEXT_PUBLIC_DEMO_MODE=true
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=qwen/qwen3.8-27b
+NEXT_PUBLIC_DEMO_MODE=false
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -393,57 +421,82 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🚀 Production Build & Deployment
+## 🤖 How Groq & The Verification Engine Work
 
-### Build Locally
+### 1. Groq Multimodal Visual Analysis
+- **Model**: `qwen/qwen3.8-27b` via Groq's high-throughput inference engine.
+- **Server-Side Isolation**: The client never communicates with Groq directly. All requests pass through the Next.js API route (`POST /api/verify`), ensuring `GROQ_API_KEY` is never exposed to browser bundles.
+- **Prompt Injection Defense**: Text visible inside uploaded media is treated as untrusted media evidence to analyze, never instructions to execute. Commands like *"Ignore previous instructions"* are cataloged as visual content rather than obeyed.
+- **Strict Structured JSON**: Groq outputs valid JSON adhering to our strict schema, enforcing the separation of **Observation** (pixel features), **Interpretation** (technical relevance), and **Assessment**.
+- **Qualitative Confidence**: Generates calibrated qualitative confidence (`Low`, `Moderate`, `High`) rather than uncalibrated artificial percentages like 99.8%.
 
-```bash
-# Type check TypeScript
-npx tsc --noEmit
+### 2. How Image Verification Works
+1. **Validation**: Enforces MIME types (JPEG, PNG, WebP) and maximum 50MB file size.
+2. **SHA-256 Hashing**: Full 256-bit cryptographic digest calculated over the binary buffer to uniquely fingerprint the exact uploaded file.
+3. **C2PA Provenance Inspection**: Scans binary markers for JUMBF boxes (`APP11 / 0xFFEB`), extracting signer assertions and claim manifests. If absent, clearly labeled as `Not found` (standard consumer baseline).
+4. **Metadata Extraction**: Zero-dependency binary extraction of EXIF IFD0/SubIFD tags, XMP RDF packets, IPTC headers, camera make/model, and post-processing editing software signatures.
+5. **Forensic Analysis**: Audits JPEG Discrete Quantization Tables (`DQT 0xFFDB`), estimates IJG compression quality factor, and validates container stream termination at `EOI 0xFFD9`.
+6. **Deterministic Aggregation**: Rule-based aggregator synthesizes the 4 independent signals, formulating a transparent assessment and the `"Why this assessment?"` explainability breakdown.
 
-# Compile production bundle
-npm run build
+### 3. How Video Verification Works
+- Videos are not streamed monolithically into the language model.
+- Client-side `<canvas>` extracts representative temporal keyframes (Beginning, 25%, 50%, 75%, End).
+- Keyframes are transmitted to the server and batched (up to 3 frames per Groq multimodal call).
+- Groq evaluates cross-frame consistency: identity stability, shadow/lighting continuity, and temporal boundary jitter.
 
-# Start production server
-npm start
-```
-
-### Netlify Deployment
-
-TrustLayer includes first-class Netlify support via `netlify.toml`:
-
-```toml
-[build]
-  command = "npm run build"
-  publish = ".next"
-
-[build.environment]
-  NODE_VERSION = "20"
-  NEXT_PUBLIC_DEMO_MODE = "true"
-  NEXT_PUBLIC_SITE_URL = "https://trustlayer-v1.netlify.app"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-```
-
-#### Production Environment Variables
-
-| Variable | Required | Default | Purpose |
-|:---|:---:|:---:|:---|
-| `NEXT_PUBLIC_SITE_URL` | Yes | `Site URL` | Canonical domain for metadataBase, sitemap, and Open Graph previews |
-| `NEXT_PUBLIC_DEMO_MODE` | No | `false` | When `true`, enables deterministic forensic simulation mode |
-| `TRUSTLAYER_API_KEY` | Optional | `None` | Private server-to-server bearer authentication key |
-| `PYTHON_BACKEND_URL` | Optional | `None` | Upstream PyTorch ML inference cluster endpoint |
-| `C2PA_SERVICE_URL` | Optional | `None` | Upstream Rust C2PA inspection service |
-| `METADATA_SERVICE_URL` | Optional | `None` | Upstream ExifTool binary parsing service |
+### 4. Privacy & Data Handling
+- **Zero Permanent Media Retention**: Media files are processed ephemerally in volatile memory and discarded immediately following analysis.
+- **No Payload Logging**: Base64 payloads and raw images are never logged or stored.
+- **Local Persistence**: Reports and summary metadata are stored in client `localStorage` and temporary runtime memory for shareable report links.
 
 ---
 
 ## 🔌 API Specification
 
-TrustLayer exposes a REST API endpoint for forensic media verification:
+### `POST /api/verify`
 
-### `POST /api/analyze`
+#### Request (Multipart Form Data)
+```http
+POST /api/verify HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="sample.jpg"
+Content-Type: image/jpeg
+
+[binary content]
+------WebKitFormBoundary--
+```
+
+#### Response (TrustReport JSON)
+```json
+{
+  "id": "rep_mucfvt6j_00n84",
+  "reportReferenceId": "TL-2026-X7AB",
+  "mediaFile": {
+    "name": "sample.jpg",
+    "size": 1158018,
+    "type": "image/jpeg",
+    "extension": "JPG",
+    "mediaKind": "image",
+    "hashSha256": "249664a541118010e39db8afcaf3aacf4cc46de16fce2bf8e8253b587c2e7d72"
+  },
+  "overallTrustLevel": "suspicious",
+  "overallAssessment": "POTENTIALLY SYNTHETIC",
+  "assessmentConfidence": "MODERATE",
+  "evidenceStrengthLabel": "SINGLE CORROBORATED SIGNAL",
+  "verdictTitle": "Visual Synthetic Patterns Observed",
+  "verdictSummary": "Observable generative indicators were noted during visual inspection.",
+  "keyFindings": [
+    "AI visual analysis detected observable synthetic or generative artifacts.",
+    "C2PA Content Credentials detected in container.",
+    "EXIF hardware acquisition metadata was absent or stripped.",
+    "Forensic inspection of container markers conforms to standard specifications.",
+    "These signals increase the reason for review, but do not establish authenticity with absolute certainty."
+  ],
+  "disclaimer": "TrustLayer provides evidence-based assessment and is not a definitive authenticity oracle."
+}
+```
 
 #### Request (Multipart Form Data)
 ```http
@@ -543,6 +596,10 @@ TrustLayer/
 ---
 
 ## ⚠️ Responsible Use & Technical Limitations
+
+> [!IMPORTANT]
+> **"TrustLayer provides evidence-based assessment and is not a definitive authenticity oracle."**
+> Multi-signal verification aggregates observable evidentiary indicators to guide human investigation; it never declares absolute real or fake verdicts.
 
 TrustLayer is built with a commitment to scientific transparency and ethical media forensics:
 
