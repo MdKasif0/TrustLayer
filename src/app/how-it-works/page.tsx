@@ -2,19 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Upload,
-  Cpu,
-  FileSearch,
-  ShieldCheck,
-  ArrowRight,
-  BrainCircuit,
+  Hash,
   Fingerprint,
+  FileSearch,
+  BrainCircuit,
   Layers,
   Scale,
-  CheckCircle2,
-  BookOpen,
-  GraduationCap,
+  FileText,
+  ArrowDown,
+  ArrowRight,
   Shield,
   ScanSearch,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { constructMetadata } from "@/lib/seo";
@@ -22,99 +21,123 @@ import { constructMetadata } from "@/lib/seo";
 export const metadata: Metadata = constructMetadata({
   title: "How It Works — Digital Media Verification Workflow",
   description:
-    "Learn how TrustLayer combines AI detection, provenance, metadata, and forensic signals to assess digital media without relying on fragile single-model detectors.",
+    "Learn how TrustLayer analyzes digital media through an 8-step verification pipeline: upload, SHA-256, C2PA provenance, metadata, Groq AI analysis, forensics, evidence aggregation, and Trust Report.",
   path: "/how-it-works",
 });
 
 export default function HowItWorksPage() {
-  const steps = [
+  const pipelineSteps = [
     {
       number: "01",
-      title: "Upload & Ingest",
+      id: "upload",
+      title: "UPLOAD",
       icon: Upload,
-      headline: "Local sandbox ingestion with cryptographic hashing",
+      headline: "File Validation & Security Sandboxing",
       description:
-        "Media is ingested strictly in browser volatile memory. TrustLayer computes SHA-256 integrity digests immediately upon drop, establishing an immutable cryptographic reference point before any inspection commences.",
-      details: [
-        "Ephemeral in-memory processing (no persistent server retention)",
-        "Automated format and MIME type container validation",
-        "Deterministic SHA-256 fingerprint generation",
+        "Media is uploaded and validated strictly as untrusted binary input. TrustLayer enforces MIME type verification, file extension validation, and maximum size limits (50 MB) to protect against container exploitation.",
+      technicalDetails: [
+        "MIME type and magic-number byte signature sniffing",
+        "Sanitization of filenames against path traversal sequences",
+        "Container dimension extraction for images and duration for videos",
       ],
     },
     {
       number: "02",
-      title: "Multi-Signal Analysis",
-      icon: Cpu,
-      headline: "Independent parallel evaluation across four evidentiary layers",
+      id: "hash",
+      title: "HASH",
+      icon: Hash,
+      headline: "Cryptographic SHA-256 Digest Generation",
       description:
-        "Rather than delegating authenticity to an isolated AI black box, TrustLayer triggers four independent diagnostic engines simultaneously across frequency domain, metadata headers, and cryptographic ledgers.",
-      details: [
-        "AI Spectral & Latent Diffusion Feature Analysis",
-        "C2PA / CAI Cryptographic Provenance Manifest Inspection",
-        "Hardware Sensor EXIF & Compression Quantization Auditing",
-        "Error Level Analysis (ELA) & PRNU Sensor Noise Forensics",
+        "A cryptographic SHA-256 digest is generated from the complete uploaded binary buffer. This establishes an immutable content identifier to verify file integrity across reports.",
+      technicalDetails: [
+        "Cryptographic 256-bit SHA-256 hex digest",
+        "Serves purely as a unique content identifier, not an authenticity score",
+        "Full hash is displayed and copyable in the final Trust Report",
       ],
     },
     {
       number: "03",
-      title: "Review Evidence",
-      icon: FileSearch,
-      headline: "Transparent, visual evidentiary maps and telemetry",
+      id: "provenance",
+      title: "PROVENANCE",
+      icon: Fingerprint,
+      headline: "C2PA / Content Credentials Inspection",
       description:
-        "Every signal produces inspectable data artifacts. Investigators can toggle between Discrete Cosine Transform heatmaps, optical edge reticles, and raw container headers to see exactly what triggered the system.",
-      details: [
-        "Interactive Error Level Analysis (ELA) heatmap overlay",
-        "Edge gradient continuity and PRNU noise floor metrics",
-        "Structured cryptographic signer validation assertions",
+        "The binary container is scanned for C2PA Content Credentials and ISO/IEC 19566-5 JUMBF boxes. If present, claim generators, signing timestamps, and manifest assertions are extracted.",
+      technicalDetails: [
+        "JPEG APP11 (0xFFEB) JUMBF box & Content Credentials scanning",
+        "PNG c2pa / caPI chunks & MP4 ISO-BMFF uuid / jumb boxes",
+        "Explicit aggregation rule: Missing C2PA is neutral and NEVER treated as proof of fake",
       ],
     },
     {
       number: "04",
-      title: "Understand Risk",
-      icon: ShieldCheck,
-      headline: "Calibrated probabilistic synthesis without absolute claims",
+      id: "metadata",
+      title: "METADATA",
+      icon: FileSearch,
+      headline: "EXIF, XMP, IPTC & Software Signature Extraction",
       description:
-        "TrustLayer synthesizes findings into a clear, probabilistic assessment. The platform explicitly refuses to declare 100% certainty, arming human analysts with transparent evidentiary weights to make informed decisions.",
-      details: [
-        "Categorized risk classifications: Verified, Likely Authentic, Review, or Manipulated",
-        "Signal agreement scoring across independent detection vectors",
-        "Exportable, signed PDF and JSON verification summaries",
+        "Extracts camera make, model, modification timestamps, orientation, color space, and software tags from native binary headers without relying on external cloud parsers.",
+      technicalDetails: [
+        "Native binary parsing of TIFF headers and IFD0/SubIFD tags",
+        "Detection of post-processing software (e.g. Adobe Photoshop, GIMP, Canva)",
+        "Truthful labeling: Missing camera information is marked as 'Unavailable' rather than fabricated",
       ],
     },
-  ];
-
-  const signals = [
     {
-      id: "ai-detection",
-      title: "AI Detection",
-      subtitle: "Synthetic-Content Indicators",
+      number: "05",
+      id: "ai-analysis",
+      title: "AI ANALYSIS",
       icon: BrainCircuit,
+      headline: "Groq Multimodal Visual Analysis (qwen/qwen3.8-27b)",
       description:
-        "Analyzes periodic frequency-domain artifacts (DCT / FFT) and universal latent visual projections characteristic of diffusion and generative transformer architectures.",
+        "The media (or sampled representative video keyframes) is analyzed using Groq's multimodal AI model server-side. The model inspects observable visual evidence, separating observations from interpretations.",
+      technicalDetails: [
+        "Prompt Injection Defense: Visible text is treated as evidence, never instructions",
+        "Structured JSON schema with strict schema validation and retry fallback",
+        "Qualitative confidence ratings (Low / Moderate / High) instead of uncalibrated percentages",
+      ],
     },
     {
-      id: "provenance",
-      title: "Provenance",
-      subtitle: "C2PA / Content Credentials",
-      icon: Fingerprint,
-      description:
-        "Extracts and validates cryptographic JUMBF manifest stores, verifying X.509 certificate chains, hardware tamper assertions, and signed edit lineages.",
-    },
-    {
-      id: "metadata",
-      title: "Metadata",
-      subtitle: "File-Level Structure",
-      icon: FileSearch,
-      description:
-        "Audits EXIF tags, quantization tables, color space profiles, and encoder software signatures against known physical camera sensor baselines.",
-    },
-    {
+      number: "06",
       id: "forensics",
-      title: "Forensics",
-      subtitle: "Visual & Sensor Signals",
+      title: "FORENSICS",
       icon: Layers,
+      headline: "JPEG Quantization (DQT) & Container Integrity Audit",
       description:
-        "Inspects Error Level Analysis (ELA) recompression variance, PRNU sensor noise floor distributions, and localized edge gradient discontinuities.",
+        "Performs genuine binary checks on compression tables and container boundaries to identify non-standard quantization curves and trailing payloads.",
+      technicalDetails: [
+        "JPEG DQT (0xFFDB) matrix extraction and IJG compression quality estimation",
+        "Container boundary audit: Scans for trailing bytes past End-of-Image (EOI 0xFFD9)",
+        "Accurate scope: Advanced models (PRNU sensor fingerprinting, GAN latent residuals) are explicitly marked unavailable",
+      ],
+    },
+    {
+      number: "07",
+      id: "aggregation",
+      title: "EVIDENCE AGGREGATION",
+      icon: Scale,
+      headline: "Deterministic Multi-Signal Synthesis",
+      description:
+        "A deterministic rule-based layer combines all active signals (AI Detection, Provenance, Metadata, Forensics) into an objective assessment. The LLM does NOT decide the final verdict.",
+      technicalDetails: [
+        "Strict separation of positive, negative, missing, and inconclusive evidence",
+        "Generates qualitative verdict: Potentially Synthetic, Requires Review, No Strong Signal, or Insufficient Evidence",
+        "Generates the 'Why this assessment?' explainability trail for human review",
+      ],
+    },
+    {
+      number: "08",
+      id: "trust-report",
+      title: "TRUST REPORT",
+      icon: FileText,
+      headline: "Transparent, Calibrated Verification Report",
+      description:
+        "Presents the completed assessment with all four independent evidence pillars, full file details, SHA-256 hash, and clear methodological limitations.",
+      technicalDetails: [
+        "Complete explainability trail answering exactly what evidence led to the assessment",
+        "Local and server-side report persistence allowing permanent retrieval via /report/[id]",
+        "Exportable formatted reports and shareable verification permalinks",
+      ],
     },
   ];
 
@@ -127,27 +150,28 @@ export default function HowItWorksPage() {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold bg-soft-green px-2.5 py-0.5 rounded border border-[#A3D9B5]">
-                  METHODOLOGY &amp; WORKFLOW
+                  VERIFICATION PIPELINE
                 </span>
                 <span className="text-[11px] font-mono uppercase tracking-wider text-muted bg-[#F0F2F0] px-2 py-0.5 rounded border border-border">
-                  FOUR-STAGE PIPELINE
+                  8-STAGE EVIDENTIARY FLOW
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
                 How TrustLayer verifies digital media
               </h1>
               <p className="text-sm sm:text-base text-secondary mt-2 max-w-2xl leading-relaxed">
-                TrustLayer does not attempt to answer authenticity with a single detector. It combines multiple evidence sources to provide a transparent, probabilistic assessment.
+                TrustLayer analyzes digital images and videos using multiple independent evidence signals. It provides a transparent, evidence-based assessment rather than a single black-box score.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
+              <Link href="/research">
+                <Button variant="secondary" size="md" icon={<BookOpen className="w-4 h-4" />}>
+                  Research Literature
+                </Button>
+              </Link>
               <Link href="/verify">
-                <Button
-                  variant="primary"
-                  size="md"
-                  icon={<ScanSearch className="w-4 h-4" />}
-                >
+                <Button variant="primary" size="md" icon={<ScanSearch className="w-4 h-4" />}>
                   Verify Media
                 </Button>
               </Link>
@@ -156,59 +180,95 @@ export default function HowItWorksPage() {
         </header>
 
         {/* ══════════════════════════════════════════════════════════
-            SECTION 1: THE FOUR-STEP VERIFICATION WORKFLOW
+            PIPELINE FLOW DIAGRAM (VISUAL CHAIN)
             ══════════════════════════════════════════════════════════ */}
-        <section className="mb-20">
+        <section className="mb-16">
+          <div className="p-6 sm:p-8 bg-surface border border-border rounded-xl shadow-xs">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold mb-4 block">
+              PIPELINE ARCHITECTURE (END-TO-END FLOW)
+            </span>
+
+            {/* Visual Pipeline Chain */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center text-xs font-mono font-bold">
+              {pipelineSteps.map((step, idx) => {
+                const StepIcon = step.icon;
+                return (
+                  <div
+                    key={step.id}
+                    className="p-3 rounded-lg bg-[#FAFBF9] border border-border/80 flex flex-col items-center justify-between gap-2"
+                  >
+                    <span className="text-[10px] text-muted">{step.number}</span>
+                    <div className="w-8 h-8 rounded-lg bg-soft-green flex items-center justify-center text-primary">
+                      <StepIcon className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] text-foreground font-bold">{step.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="text-xs text-secondary mt-4 font-sans text-center">
+              Each stage executes genuine programmatic checks or calls server-side AI models. If a test cannot run, it is marked <code className="bg-[#F0F2F0] px-1 py-0.5 rounded font-mono text-[11px]">Not available</code> rather than simulated.
+            </p>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════
+            DETAILED 8-STAGE BREAKDOWN
+            ══════════════════════════════════════════════════════════ */}
+        <section className="space-y-6 mb-20">
           <div className="mb-8">
             <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold block mb-1">
-              THE WORKFLOW
+              DETAILED TECHNICAL STAGES
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Four steps from raw media to transparent evidence
+              What TrustLayer actually does at each verification stage
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {steps.map((step) => {
+          <div className="space-y-6">
+            {pipelineSteps.map((step, idx) => {
               const StepIcon = step.icon;
               return (
                 <article
-                  key={step.number}
-                  className="p-6 sm:p-7 rounded-xl border border-border bg-surface shadow-xs space-y-4 relative flex flex-col justify-between"
+                  key={step.id}
+                  className="p-6 sm:p-8 rounded-xl border border-border bg-surface shadow-xs space-y-4"
                 >
-                  <div>
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[10px] bg-very-soft-green text-primary flex items-center justify-center border border-[#A3D9B5]">
-                          <StepIcon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-mono font-bold text-muted uppercase tracking-wider block">
-                            STEP {step.number}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-soft-green flex items-center justify-center text-primary shrink-0 border border-[#A3D9B5]">
+                        <StepIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-primary">
+                            STAGE {step.number}
                           </span>
-                          <h3 className="text-base font-bold text-foreground font-sans">
+                          <span className="text-xs text-muted font-mono">/</span>
+                          <span className="text-xs font-mono font-bold text-foreground">
                             {step.title}
-                          </h3>
+                          </span>
                         </div>
+                        <h3 className="text-lg font-bold text-foreground tracking-tight">
+                          {step.headline}
+                        </h3>
                       </div>
                     </div>
-
-                    <h4 className="text-sm font-semibold text-foreground mb-2">
-                      {step.headline}
-                    </h4>
-
-                    <p className="text-xs sm:text-sm text-secondary leading-relaxed mb-4">
-                      {step.description}
-                    </p>
                   </div>
 
-                  <div className="pt-4 border-t border-border space-y-1.5 font-mono text-xs">
-                    {step.details.map((detail, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-muted">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                        <span>{detail}</span>
-                      </div>
-                    ))}
+                  <p className="text-xs sm:text-sm text-secondary leading-relaxed">
+                    {step.description}
+                  </p>
+
+                  <div className="pt-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold block mb-2">
+                      Technical Implementation Details:
+                    </span>
+                    <ul className="text-xs text-foreground/90 space-y-1.5 list-disc list-inside font-sans leading-relaxed">
+                      {step.technicalDetails.map((detail, dIdx) => (
+                        <li key={dIdx}>{detail}</li>
+                      ))}
+                    </ul>
                   </div>
                 </article>
               );
@@ -217,91 +277,39 @@ export default function HowItWorksPage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════
-            SECTION 2: THE FOUR INDEPENDENT EVIDENCE SIGNALS
+            CORE PHILOSOPHY CALLOUT
             ══════════════════════════════════════════════════════════ */}
-        <section className="mb-20">
-          <div className="mb-8">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold block mb-1">
-              INDEPENDENT SIGNALS
-            </span>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Multi-signal evidentiary synthesis
-            </h2>
-            <p className="text-sm text-secondary mt-1 max-w-2xl">
-              Single-model detectors are easily bypassed by novel generators or light editing. TrustLayer checks across four separate technical dimensions.
-            </p>
+        <section className="p-6 sm:p-8 rounded-xl border border-[#E8D5A0] bg-[#FBF7EE] shadow-xs space-y-4 mb-16">
+          <div className="flex items-center gap-2 text-[#92610F]">
+            <Shield className="w-5 h-5 shrink-0" />
+            <h4 className="font-bold text-xs font-mono uppercase tracking-wider">
+              Core TrustLayer Philosophy
+            </h4>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {signals.map((sig) => {
-              const Icon = sig.icon;
-              return (
-                <div
-                  key={sig.id}
-                  className="p-5 rounded-xl border border-border bg-surface shadow-xs space-y-3 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-9 h-9 rounded-lg bg-very-soft-green text-primary flex items-center justify-center mb-3 border border-[#A3D9B5]">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <h3 className="text-sm font-bold text-foreground font-mono">
-                      {sig.title}
-                    </h3>
-                    <p className="text-[11px] font-mono text-primary font-semibold mb-2">
-                      {sig.subtitle}
-                    </p>
-                    <p className="text-xs text-secondary leading-relaxed">
-                      {sig.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <blockquote className="text-base sm:text-lg font-semibold text-[#5D420F] leading-snug">
+            &ldquo;Multiple signals → evidence aggregation → transparent assessment. Never present an AI-generated prediction as an unquestionable fact.&rdquo;
+          </blockquote>
+
+          <p className="text-xs sm:text-sm text-[#5D420F]/90 leading-relaxed font-sans">
+            TrustLayer uses nuanced classifications such as <strong>Potentially Synthetic</strong>, <strong>Potentially Manipulated</strong>, <strong>Requires Review</strong>, <strong>No Strong Synthetic Signals Detected</strong>, and <strong>Insufficient Evidence</strong> rather than misleading absolutes like &ldquo;100% Real&rdquo; or &ldquo;100% Fake&rdquo;.
+          </p>
         </section>
 
-        {/* ══════════════════════════════════════════════════════════
-            SECTION 3: SCIENTIFIC TRANSPARENCY CALLOUT & DEEP LINKS
-            ══════════════════════════════════════════════════════════ */}
-        <section className="p-8 rounded-xl border border-border bg-surface shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="max-w-2xl">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-primary font-bold block mb-1">
-              GROUNDED IN SCIENTIFIC LITERATURE
-            </span>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Explore the research and technical foundations
-            </h2>
-            <p className="text-xs sm:text-sm text-secondary leading-relaxed">
-              Read how TrustLayer implements peer-reviewed benchmarks from Wang et al., Ojha et al. (CVPR), FaceForensics++, NIST standards, and C2PA Content Credentials.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+        {/* Bottom CTA */}
+        <section className="p-6 rounded-xl border border-border bg-surface shadow-xs flex flex-wrap items-center justify-between gap-4">
+          <span className="text-xs font-mono text-muted">
+            TrustLayer Verification Pipeline · Powered by Groq qwen/qwen3.8-27b
+          </span>
+          <div className="flex items-center gap-3">
             <Link href="/research">
-              <Button
-                variant="secondary"
-                size="md"
-                icon={<GraduationCap className="w-4 h-4" />}
-              >
-                Explore Research
-              </Button>
-            </Link>
-            <Link href="/docs">
-              <Button
-                variant="secondary"
-                size="md"
-                icon={<BookOpen className="w-4 h-4" />}
-              >
-                Documentation
+              <Button variant="secondary" size="sm">
+                Research Foundation
               </Button>
             </Link>
             <Link href="/verify">
-              <Button
-                variant="primary"
-                size="md"
-                icon={<ScanSearch className="w-4 h-4" />}
-              >
-                Verify Media
+              <Button variant="primary" size="sm">
+                Start Verification
               </Button>
             </Link>
           </div>
