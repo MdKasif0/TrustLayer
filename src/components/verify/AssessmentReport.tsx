@@ -21,6 +21,10 @@ import {
   ArrowDown,
   FileText,
   ShieldAlert,
+  ShieldCheck,
+  Copy,
+  Check,
+  Hash,
 } from "lucide-react";
 
 interface AssessmentReportProps {
@@ -32,6 +36,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [activeDetailSection, setActiveDetailSection] = useState<string | null>(null);
+  const [copiedHash, setCopiedHash] = useState(false);
 
   const handleScrollToEvidence = (sectionId: string) => {
     setActiveDetailSection(sectionId);
@@ -40,6 +45,41 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
+  const handleCopyHash = () => {
+    if (report.mediaFile.hashSha256) {
+      navigator.clipboard.writeText(report.mediaFile.hashSha256);
+      setCopiedHash(true);
+      setTimeout(() => setCopiedHash(false), 2000);
+    }
+  };
+
+  // Find individual signal results
+  const aiSignal = report.signalResults.find((s) => s.signalId === "ai-detection");
+  const provSignal = report.signalResults.find((s) => s.signalId === "provenance");
+  const metaSignal = report.signalResults.find((s) => s.signalId === "metadata");
+  const forensicSignal = report.signalResults.find((s) => s.signalId === "forensic");
+
+  // Determine top styling based on overall assessment
+  const isSuspicious =
+    report.overallTrustLevel === "suspicious" ||
+    report.overallAssessment.includes("SYNTHETIC") ||
+    report.overallAssessment.includes("MANIPULATED");
+  const isVerified =
+    report.overallTrustLevel === "verified" ||
+    report.overallAssessment.includes("NO STRONG SYNTHETIC SIGNALS");
+
+  const headerBorderColor = isSuspicious
+    ? "bg-[#B7791F]"
+    : isVerified
+    ? "bg-[#1E5631]"
+    : "bg-[#92610F]";
+
+  const badgeColor = isSuspicious
+    ? "bg-warning-bg text-[#92610F] border-[#E8D5A0]"
+    : isVerified
+    ? "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+    : "bg-warning-bg text-[#92610F] border-[#E8D5A0]";
 
   return (
     <div className="space-y-10 w-full pb-16">
@@ -73,14 +113,14 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-1">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-mono">
-              {report.mediaFile.name || "example-image.jpg"}
+              {report.mediaFile.name || "uploaded-media"}
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-xs text-secondary mt-1.5 font-mono">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-secondary shrink-0" />
                 <span>Analyzed:</span>
                 <span className="text-foreground font-medium">
-                  {report.formattedAnalyzedAt || "September 21, 2026"}
+                  {report.formattedAnalyzedAt || "Just now"}
                 </span>
               </div>
               <span className="text-secondary/40">·</span>
@@ -94,7 +134,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             </div>
           </div>
 
-          {/* Action Buttons: Export Report (Primary), Share Report (Secondary), Analyze Another (Tertiary) */}
+          {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Button
               variant="primary"
@@ -125,36 +165,67 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
       </header>
 
       {/* ─────────────────────────────────────────────────────────────
+          FILE IDENTIFIER & SHA-256 INTEGRITY
+      ───────────────────────────────────────────────────────────── */}
+      <section className="border border-border rounded-xl bg-surface p-5 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4 text-primary" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
+                Cryptographic Content Identifier (SHA-256)
+              </span>
+            </div>
+            <p className="text-xs text-secondary font-mono break-all select-all bg-[#FAFBF9] px-3 py-1.5 rounded border border-border/80">
+              {report.mediaFile.hashSha256 || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+            </p>
+            <p className="text-[11px] text-secondary italic font-sans pt-0.5">
+              &ldquo;The SHA-256 digest identifies the exact uploaded file. It does not determine whether the media is authentic.&rdquo;
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleCopyHash}
+              icon={copiedHash ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
+            >
+              {copiedHash ? "Hash Copied" : "Copy SHA-256"}
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
           MAIN ASSESSMENT
       ───────────────────────────────────────────────────────────── */}
       <section className="border border-border rounded-xl bg-surface p-6 sm:p-8 shadow-xs relative overflow-hidden">
-        {/* Top Hairline Indicator */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-[#B7791F]" />
+        <div className={`absolute top-0 left-0 right-0 h-1 ${headerBorderColor}`} />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#92610F]">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-primary">
                 OVERALL ASSESSMENT
               </span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-warning-bg text-[#92610F] border border-[#E8D5A0]">
-                <ShieldAlert className="w-3 h-3" />
-                Multi-Signal Advisory
+              <span className={`inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${badgeColor}`}>
+                {isSuspicious ? <ShieldAlert className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+                Evidence-Based Synthesis
               </span>
             </div>
 
-            {/* Large but restrained assessment header */}
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-              {report.overallAssessment || "POTENTIALLY SYNTHETIC / MANIPULATED"}
+              {report.overallAssessment || "NO STRONG SYNTHETIC SIGNALS DETECTED"}
             </h2>
 
             <p className="text-xs text-secondary italic font-sans pt-0.5">
-              &ldquo;Based on the evidence currently available to TrustLayer.&rdquo;
+              &ldquo;Based on the observable evidence currently available to TrustLayer.&rdquo;
             </p>
 
             <p className="text-xs sm:text-sm text-secondary max-w-2xl leading-relaxed pt-1">
               {report.verdictSummary ||
-                "Multiple independent evidence signals indicate characteristics consistent with generative synthesis and non-optical post-processing."}
+                "Multiple independent evidence signals were evaluated to assess synthetic or manipulation indicators."}
             </p>
           </div>
 
@@ -164,7 +235,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
               <span className="text-[11px] font-sans text-secondary block uppercase tracking-wider">
                 Evidence strength:
               </span>
-              <span className="text-sm sm:text-base font-bold font-mono text-[#92610F]">
+              <span className="text-sm sm:text-base font-bold font-mono text-primary">
                 {report.evidenceStrengthLabel || "MULTIPLE SIGNALS"}
               </span>
             </div>
@@ -173,7 +244,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
               <span className="text-[11px] font-sans text-secondary block uppercase tracking-wider">
                 Assessment confidence:
               </span>
-              <span className="text-sm sm:text-base font-bold font-mono text-foreground">
+              <span className="text-sm sm:text-base font-bold font-mono text-foreground uppercase">
                 {report.assessmentConfidence || "MODERATE"}
               </span>
             </div>
@@ -188,7 +259,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          FOUR SIGNALS: ELEGANT EVIDENCE OVERVIEW
+          FOUR SIGNALS: EVIDENCE OVERVIEW CARDS
       ───────────────────────────────────────────────────────────── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -205,38 +276,49 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
           </span>
         </div>
 
-        {/* 4 Elegant Signal Cards */}
+        {/* 4 Dynamic Signal Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 1. AI DETECTION CARD */}
           <div className="border border-border rounded-xl bg-surface p-5 shadow-xs flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#FDF2F2] flex items-center justify-center text-[#991B1B] shrink-0 border border-[#F8B4B4]">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    aiSignal?.anomalyDetected
+                      ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
                     <BrainCircuit className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-foreground font-mono">
                       AI DETECTION
                     </h4>
-                    <span className="text-[11px] text-secondary">Synthetic media indicators</span>
+                    <span className="text-[11px] text-secondary">Visual generative indicators</span>
                   </div>
                 </div>
 
-                {/* Status Indicator (Red: Suspicious / detected) */}
                 <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                    HIGH SIGNAL
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    aiSignal?.anomalyDetected
+                      ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                      : aiSignal?.status === "skipped"
+                      ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
+                    {aiSignal?.signalValue || "NO STRONG SIGNAL"}
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-foreground font-medium mt-3 leading-relaxed">
-                &ldquo;Visual patterns associated with synthetic media were detected.&rdquo;
+                {aiSignal?.summary || "No prominent generative synthesis patterns were observed."}
               </p>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Discrete cosine transform identified periodic frequency-domain lattice artifacts characteristic of generative diffusion.
-              </p>
+              {aiSignal?.items && aiSignal.items.length > 0 && (
+                <p className="text-xs text-secondary mt-1 leading-relaxed line-clamp-2">
+                  {aiSignal.items[0].summary}
+                </p>
+              )}
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
@@ -256,7 +338,11 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             <div>
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#FBF7EE] flex items-center justify-center text-[#92610F] shrink-0 border border-[#E8D5A0]">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    provSignal?.status === "analyzed"
+                      ? "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                      : "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                  }`}>
                     <Fingerprint className="w-4 h-4" />
                   </div>
                   <div>
@@ -267,19 +353,24 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
                   </div>
                 </div>
 
-                {/* Status Indicator (Amber: Unavailable) */}
                 <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                    NOT FOUND
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    provSignal?.status === "analyzed"
+                      ? "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                      : "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                  }`}>
+                    {provSignal?.signalValue || "NOT FOUND"}
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-foreground font-medium mt-3 leading-relaxed">
-                &ldquo;No verifiable C2PA Content Credentials found.&rdquo;
+                {provSignal?.summary || "No C2PA Content Credentials were detected in the uploaded file."}
               </p>
               <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Container headers contain no JUMBF metadata box or cryptographic signer assertions (standard consumer camera state).
+                {provSignal?.status === "analyzed"
+                  ? "Cryptographic provenance manifest located in container."
+                  : "Absence of C2PA is neutral: standard consumer cameras and messaging apps do not embed Content Credentials."}
               </p>
             </div>
 
@@ -300,31 +391,40 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             <div>
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#FBF7EE] flex items-center justify-center text-[#92610F] shrink-0 border border-[#E8D5A0]">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    metaSignal?.anomalyDetected
+                      ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
                     <FileSearch className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-foreground font-mono">
                       METADATA
                     </h4>
-                    <span className="text-[11px] text-secondary">EXIF / file information</span>
+                    <span className="text-[11px] text-secondary">EXIF / container tags</span>
                   </div>
                 </div>
 
-                {/* Status Indicator (Amber: Requires review) */}
                 <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                    REVIEW
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    metaSignal?.anomalyDetected
+                      ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
+                    {metaSignal?.signalValue || "REVIEWED"}
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-foreground font-medium mt-3 leading-relaxed">
-                &ldquo;File characteristics require review.&rdquo;
+                {metaSignal?.summary || "Container metadata reviewed."}
               </p>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Quantization profiles diverge from standard hardware sensors, and software signature indicates server-side encoding.
-              </p>
+              {metaSignal?.items && metaSignal.items.length > 0 && (
+                <p className="text-xs text-secondary mt-1 leading-relaxed line-clamp-2">
+                  {metaSignal.items[0].summary}
+                </p>
+              )}
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
@@ -344,31 +444,42 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             <div>
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#FDF2F2] flex items-center justify-center text-[#991B1B] shrink-0 border border-[#F8B4B4]">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    forensicSignal?.anomalyDetected
+                      ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
                     <Layers className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-foreground font-mono">
                       FORENSICS
                     </h4>
-                    <span className="text-[11px] text-secondary">Visual / temporal analysis</span>
+                    <span className="text-[11px] text-secondary">Quantization &amp; container audit</span>
                   </div>
                 </div>
 
-                {/* Status Indicator (Red: Detected) */}
                 <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                    DETECTED
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    forensicSignal?.anomalyDetected
+                      ? "bg-[#FDF2F2] text-[#991B1B] border-[#F8B4B4]"
+                      : forensicSignal?.status === "skipped"
+                      ? "bg-[#FBF7EE] text-[#92610F] border-[#E8D5A0]"
+                      : "bg-[#EBF7EE] text-[#1E5631] border-[#C1E3CA]"
+                  }`}>
+                    {forensicSignal?.signalValue || "NORMAL"}
                   </span>
                 </div>
               </div>
 
               <p className="text-xs text-foreground font-medium mt-3 leading-relaxed">
-                &ldquo;Visual anomalies detected.&rdquo;
+                {forensicSignal?.summary || "Quantization tables and container structure conform to standard expectations."}
               </p>
-              <p className="text-xs text-secondary mt-1 leading-relaxed">
-                Error Level Analysis (ELA) exhibits localized compression discontinuities (+28.6% delta) along focal boundaries.
-              </p>
+              {forensicSignal?.items && forensicSignal.items.length > 0 && (
+                <p className="text-xs text-secondary mt-1 leading-relaxed line-clamp-2">
+                  {forensicSignal.items[0].summary}
+                </p>
+              )}
             </div>
 
             <div className="pt-3 border-t border-border flex justify-end">
@@ -386,7 +497,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          SECTION: "Why this assessment?" (VISUAL EVIDENCE TIMELINE)
+          SECTION: "Why this assessment?" (DYNAMIC EVIDENTIARY REASONING)
       ───────────────────────────────────────────────────────────── */}
       <section className="border border-border rounded-xl bg-surface p-6 sm:p-8 shadow-xs space-y-6">
         <div>
@@ -397,103 +508,40 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
             Why this assessment?
           </h3>
           <p className="text-xs sm:text-sm text-secondary mt-1 max-w-2xl">
-            TrustLayer converges independent evidence vectors into a transparent assessment rather than relying on a single detector:
+            TrustLayer aggregates independent evidence signals into an explainable assessment:
           </p>
         </div>
 
-        {/* Elegant Visual Evidence Timeline */}
-        <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2.5 sm:before:left-3.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-border">
-          {/* Timeline Step 1: AI Detection */}
-          <div className="relative group">
-            <div className="absolute -left-6 sm:-left-8 top-1 w-3 h-3 rounded-full bg-[#991B1B] ring-4 ring-surface" />
-            <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 hover:border-border transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                  <span>01</span>
-                  <span>AI Detection</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                  HIGH SIGNAL
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-secondary font-mono mt-1">
-                <ArrowDown className="w-3 h-3 text-[#991B1B] shrink-0" />
-                <span className="text-foreground font-medium">Synthetic-pattern indicators detected</span>
-              </div>
-              <p className="text-xs text-secondary mt-1 font-sans">
-                Discrete cosine transform reveals high-frequency mathematical lattice artifacts characteristic of diffusion upsampling models.
-              </p>
+        {/* Dynamic Numbered Reasoning List */}
+        <div className="space-y-3">
+          {report.keyFindings && report.keyFindings.length > 0 ? (
+            report.keyFindings.map((finding, idx) => {
+              const isDisclaimer = finding.includes("absolute certainty") || finding.includes("increase the reason for review");
+              return (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-lg border transition-colors ${
+                    isDisclaimer
+                      ? "bg-[#FBF7EE] border-[#E8D5A0] text-[#5D420F]"
+                      : "bg-[#FAFBF9] border-border/80 text-foreground"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="font-mono text-xs font-bold text-primary shrink-0 mt-0.5">
+                      {String(idx + 1).padStart(2, "0")}.
+                    </span>
+                    <p className="text-xs sm:text-sm leading-relaxed font-sans">
+                      {finding}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 text-xs text-secondary">
+              1. All active evidence signals evaluated and within normal baseline expectations.
             </div>
-          </div>
-
-          {/* Timeline Step 2: Metadata */}
-          <div className="relative group">
-            <div className="absolute -left-6 sm:-left-8 top-1 w-3 h-3 rounded-full bg-[#B7791F] ring-4 ring-surface" />
-            <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 hover:border-border transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                  <span>02</span>
-                  <span>Metadata</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                  REVIEW
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-secondary font-mono mt-1">
-                <ArrowDown className="w-3 h-3 text-[#B7791F] shrink-0" />
-                <span className="text-foreground font-medium">File characteristics require review</span>
-              </div>
-              <p className="text-xs text-secondary mt-1 font-sans">
-                Quantization tables mismatch standard camera curves; container encoded via server graphics library (<code className="text-[11px] font-mono">libvips</code>) without camera hardware MakerNotes.
-              </p>
-            </div>
-          </div>
-
-          {/* Timeline Step 3: Forensics */}
-          <div className="relative group">
-            <div className="absolute -left-6 sm:-left-8 top-1 w-3 h-3 rounded-full bg-[#991B1B] ring-4 ring-surface" />
-            <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 hover:border-border transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                  <span>03</span>
-                  <span>Forensics</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDF2F2] text-[#991B1B] border border-[#F8B4B4]">
-                  DETECTED
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-secondary font-mono mt-1">
-                <ArrowDown className="w-3 h-3 text-[#991B1B] shrink-0" />
-                <span className="text-foreground font-medium">Visual anomalies detected</span>
-              </div>
-              <p className="text-xs text-secondary mt-1 font-sans">
-                Error Level Analysis (ELA) shows +28.6% discontinuous error clustering across foreground boundaries, indicating localized synthetic composition.
-              </p>
-            </div>
-          </div>
-
-          {/* Timeline Step 4: Provenance */}
-          <div className="relative group">
-            <div className="absolute -left-6 sm:-left-8 top-1 w-3 h-3 rounded-full bg-secondary/50 ring-4 ring-surface" />
-            <div className="p-4 rounded-lg bg-[#FAFBF9] border border-border/80 hover:border-border transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-foreground flex items-center gap-1.5">
-                  <span>04</span>
-                  <span>Provenance</span>
-                </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FBF7EE] text-[#92610F] border border-[#E8D5A0]">
-                  NOT FOUND
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-secondary font-mono mt-1">
-                <ArrowDown className="w-3 h-3 text-secondary shrink-0" />
-                <span className="text-foreground font-medium">No verifiable Content Credentials found</span>
-              </div>
-              <p className="text-xs text-secondary mt-1 font-sans">
-                No cryptographic origin claim attached. (Note: missing C2PA is standard across consumer devices and does not itself imply manipulation).
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -518,7 +566,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
         </div>
 
         <p className="text-sm font-semibold text-[#5D420F] leading-relaxed">
-          &ldquo;TrustLayer provides an evidence-based assessment. Results may be affected by compression, editing, missing provenance and unseen generation methods.&rdquo;
+          &ldquo;{report.disclaimer || "TrustLayer provides an evidence-based assessment. Results may be affected by compression, editing, missing provenance and unseen generation methods."}&rdquo;
         </p>
 
         {/* Essential Evidentiary Axioms */}
@@ -533,7 +581,7 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
           </div>
           <div>
             <span className="font-bold text-[#5D420F] block mb-0.5">Detector ≠ Absolute Truth</span>
-            Statistical AI indicators are probabilistic; TrustLayer requires corroborating signals.
+            Qualitative model indicators provide evidence to guide human review; not an oracle.
           </div>
         </div>
       </section>
@@ -589,4 +637,3 @@ export function AssessmentReport({ report, onReset }: AssessmentReportProps) {
     </div>
   );
 }
-
