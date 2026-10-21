@@ -7,7 +7,7 @@
   ### Evidence Based Digital Media Verification Platform
 
   <p align="center">
-    <strong>Multi-signal digital forensics combining AI generation detection, C2PA cryptographic provenance, container metadata integrity, and forensic pixel analysis into a transparent, defensible assessment.</strong>
+    <strong>Multi signal digital forensics combining AI generation detection, C2PA cryptographic provenance, container metadata integrity, and forensic pixel analysis into a transparent, defensible assessment.</strong>
   </p>
 
   <p align="center">
