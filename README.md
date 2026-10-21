@@ -66,7 +66,7 @@
 ## 🔬 Executive Summary & Philosophy
 
 In modern digital environments, single-model detectors are structurally inadequate:
-- **Zero-day generator architectures** evade fixed training distributions.
+- **Zero day generator architectures** evade fixed training distributions.
 - **Benign social media transcoding** degrades spatial features and generates false positives.
 - **Targeted local manipulations** (splicing, inpainting, face-swapping) escape global image classifiers.
 - **Naive percentage scores** (e.g., *"98.4% AI"*) create false precision and cannot withstand legal or editorial scrutiny.
