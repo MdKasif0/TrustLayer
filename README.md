@@ -42,7 +42,7 @@
 - [1. Executive Summary & Philosophy](#-executive-summary--philosophy)
 - [2. Evidentiary Architecture](#-evidentiary-architecture)
 - [3. Charts & System Graphs](#-charts--system-graphs)
-  - [3.1 End-to-End Forensic Processing Pipeline](#31-end-to-end-forensic-processing-pipeline)
+  - [3.1 End to End Forensic Processing Pipeline](#31-end-to-end-forensic-processing-pipeline)
   - [3.2 Concurrent Asynchronous Execution Timeline](#32-concurrent-asynchronous-execution-timeline)
   - [3.3 Evidence Corroboration & Verdict State Machine](#33-evidence-corroboration--verdict-state-machine)
   - [3.4 Attack Surface & Forensic Capability Matrix](#34-attack-surface--forensic-capability-matrix)
