@@ -2,7 +2,7 @@
 
   <img src="./public/brand/trustlayer-logo.png" alt="TrustLayer Logo" width="110" height="110" />
 
-  # TrustLayer
+  # Trust Layer
 
   ### Evidence Based Digital Media Verification Platform
 
@@ -123,7 +123,7 @@ flowchart TD
 
 ## 📊 Charts & System Graphs
 
-### 3.1 End-to-End Forensic Processing Pipeline
+### 3.1 End to End Forensic Processing Pipeline
 
 The following sequence illustrates how media inputs are processed concurrently across edge runtime and backend verification layers:
 
