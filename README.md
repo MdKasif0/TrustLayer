@@ -2,7 +2,7 @@
 
   <img src="./public/brand/trustlayer-logo.png" alt="TrustLayer Logo" width="110" height="110" />
 
-  # Trust Layer
+  # TrustLayer
 
   ### Evidence Based Digital Media Verification Platform
 
